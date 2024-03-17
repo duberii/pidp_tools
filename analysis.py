@@ -1,3 +1,21 @@
+def install_ROOT():
+  !wget -q https://github.com/MohamedElashri/ROOT/releases/download/ubuntu/root_v6.28.04_Ubuntu_20.04.zip
+  !unzip -o -qq /content/root_v6.28.04_Ubuntu_20.04.zip
+  !apt-get -qq install git dpkg-dev cmake g++ gcc binutils libx11-dev libxpm-dev libxft-dev libxext-dev tar gfortran subversion &> /dev/null 2>&1
+  !rm -f root_v6.28.04_Ubuntu_20.04.zip
+  !wget -q http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb
+  !sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2_amd64.deb &> /dev/null 2>&1
+  !rm -f libssl1.1_1.1.1f-1ubuntu2_amd64.deb
+  import sys
+  sys.path.append("/content/root_build/")
+  sys.path.append("/content/root_build/bin/")
+  sys.path.append("/content/root_build/include/")
+  sys.path.append("/content/root_build/lib/")
+  import ctypes
+  ctypes.cdll.LoadLibrary('/content/root_build/lib//libCore.so')
+  ctypes.cdll.LoadLibrary('/content/root_build/lib//libThread.so')
+  ctypes.cdll.LoadLibrary('/content/root_build/lib//libTreePlayer.so')
+
 class interactive_image():
   def __init__(self,image_path=""):
     self.figure = go.FigureWidget()

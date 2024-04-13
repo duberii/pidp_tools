@@ -1,0 +1,37 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pidp_tools"
+version = "1.0"
+authors = [
+    { name="Richard Dube", email="richardddube@gmail.com"},
+]
+description = "A collection of visualization and analysis tools for particle identification"
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Framework :: Jupyter",
+]
+dependencies = [
+    "matplotlib ~= 3.7",
+    "numpy ~= 1.25",
+    "tqdm ~= 4.66",
+    "scikit-learn ~= 1.2",
+    "plotly ~= 5.15",
+    "pandas ~= 2.0",
+    "ipywidgets ~= 7.7",
+    "Pillow ~= 9.4",
+]
+
+
+[project.urls]
+Homepage = "https://https://github.com/duberii/pidp_tools"
+Issues = "https://https://github.com/duberii/pidp_tools/issues"
+
+[tools.setuptools]
+py-modules = ["pidp_tools"]

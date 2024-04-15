@@ -4,6 +4,7 @@ import pandas as pd
 import xml.etree.ElementTree as ET
 from ipywidgets import interact, interactive, fixed, interact_manual, widgets, HBox, VBox, Layout
 import ipywidgets as widgets
+import subprocess
 
 def plot_vector(x_val,y_val,z_val):
   x = [0, x_val]
@@ -23,56 +24,55 @@ def y_coord(r_curvature,theta_curvature,center_y, t,q):
 def degrees_to_radians(degrees):
   return degrees*np.pi/180
 
-def get_wire_positions():
-  !wget -q -O CentralDC_HDDS.xml https://github.com/JeffersonLab/hdds/raw/master/CentralDC_HDDS.xml
-  tree =ET.parse("CentralDC_HDDS.xml")
-  root = tree.getroot()
-  n_wires_per_ring = [0]
-  wire_to_ring = [0]
-  positionsMatrix = []
-  ar = []
-  for tag in [j for j in root.findall("composition") if j.get("name")=="CDClayers"][0]:
-    if tag.tag == "mposPhi":
-      positionsMatrix.append([])
-      n_wires_per_ring.append(int(tag.get('ncopy')))
-      R_Z = float(tag.get("R_Z").split()[0])
-      Phi0 = degrees_to_radians(float(tag.get("Phi0")))
-      if tag.get("volume") == 'CDCstrawShort':
-        dPhi = degrees_to_radians(float(tag.get("dPhi")))
-        for i in range(int(tag.get("ncopy"))):
-          ar.append({'pos':[[R_Z*np.cos(Phi0+i*dPhi),R_Z*np.sin(Phi0+i*dPhi),0],[R_Z*np.cos(Phi0+i*dPhi),R_Z*np.sin(Phi0+i*dPhi),150]],'ring':int(tag.find("ring").get("value")),'straw':i+1})
-          positionsMatrix[-1].append(ar[-1]['pos'])
-      if tag.get("volume") == 'CDCstrawLong':
+class wirePositions():
+  def __init__(self):
+    subprocess.run("wget -q -O CentralDC_HDDS.xml https://github.com/JeffersonLab/hdds/raw/master/CentralDC_HDDS.xml")
+    tree =ET.parse("CentralDC_HDDS.xml")
+    root = tree.getroot()
+    n_wires_per_ring = [0]
+    wire_to_ring = [0]
+    positionsMatrix = []
+    ar = []
+    for tag in [j for j in root.findall("composition") if j.get("name")=="CDClayers"][0]:
+      if tag.tag == "mposPhi":
+        positionsMatrix.append([])
         n_wires_per_ring.append(int(tag.get('ncopy')))
-        dPhi = 2*np.pi/int(tag.get("ncopy"))
-        rot = degrees_to_radians(float(tag.get('rot').split()[0]))
-        for i in range(int(tag.get("ncopy"))):
-          ar.append({'pos':[[R_Z*np.cos(Phi0+i*dPhi)+75*np.tan(rot)*np.sin(Phi0+i*dPhi),R_Z*np.sin(Phi0+i*dPhi)-75*np.tan(rot)*np.cos(Phi0+i*dPhi),0],[R_Z*np.cos(Phi0+i*dPhi)-75*np.tan(rot)*np.sin(Phi0+i*dPhi),R_Z*np.sin(Phi0+i*dPhi)+75*np.tan(rot)*np.cos(Phi0+i*dPhi),150]],'ring':int(tag.find("ring").get("value")),'straw':i+1})
-          positionsMatrix[-1].append(ar[-1]['pos'])
-  wire_positions_df = pd.DataFrame.from_records(ar)
-  return wire_positions_df, positionsMatrix
-
-
-def ring_wire_to_x_y(rings, wires,s, dataframe=False):
-  if dataframe:
-    df = pd.DataFrame()
-    df['ring'] = rings
-    df['wire'] = wires
-    if not isinstance(s,float) and not isinstance(s, int):
-      df['x'] = [positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][0][0]*(1-s[i]) + s[i]* positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][1][0] for i in range(len(wires))]
-      df['y'] = [positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][0][1]*(1-s[i]) + s[i]* positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][1][1] for i in range(len(wires))]
+        R_Z = float(tag.get("R_Z").split()[0])
+        Phi0 = degrees_to_radians(float(tag.get("Phi0")))
+        if tag.get("volume") == 'CDCstrawShort':
+          dPhi = degrees_to_radians(float(tag.get("dPhi")))
+          for i in range(int(tag.get("ncopy"))):
+            ar.append({'pos':[[R_Z*np.cos(Phi0+i*dPhi),R_Z*np.sin(Phi0+i*dPhi),0],[R_Z*np.cos(Phi0+i*dPhi),R_Z*np.sin(Phi0+i*dPhi),150]],'ring':int(tag.find("ring").get("value")),'straw':i+1})
+            positionsMatrix[-1].append(ar[-1]['pos'])
+        if tag.get("volume") == 'CDCstrawLong':
+          n_wires_per_ring.append(int(tag.get('ncopy')))
+          dPhi = 2*np.pi/int(tag.get("ncopy"))
+          rot = degrees_to_radians(float(tag.get('rot').split()[0]))
+          for i in range(int(tag.get("ncopy"))):
+            ar.append({'pos':[[R_Z*np.cos(Phi0+i*dPhi)+75*np.tan(rot)*np.sin(Phi0+i*dPhi),R_Z*np.sin(Phi0+i*dPhi)-75*np.tan(rot)*np.cos(Phi0+i*dPhi),0],[R_Z*np.cos(Phi0+i*dPhi)-75*np.tan(rot)*np.sin(Phi0+i*dPhi),R_Z*np.sin(Phi0+i*dPhi)+75*np.tan(rot)*np.cos(Phi0+i*dPhi),150]],'ring':int(tag.find("ring").get("value")),'straw':i+1})
+            positionsMatrix[-1].append(ar[-1]['pos'])
+    self.wire_positions_df = pd.DataFrame.from_records(ar)
+    self.positionsMatrix = positionsMatrix
+  def position(self, rings, wires,s, dataframe=False):
+    if dataframe:
+      df = pd.DataFrame()
+      df['ring'] = rings
+      df['wire'] = wires
+      if not isinstance(s,float) and not isinstance(s, int):
+        df['x'] = [self.positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][0][0]*(1-s[i]) + s[i]* self.positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][1][0] for i in range(len(wires))]
+        df['y'] = [self.positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][0][1]*(1-s[i]) + s[i]* self.positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][1][1] for i in range(len(wires))]
+      else:
+        df['x'] = [self.positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][0][0]*(1-s) + s* self.positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][1][0] for i in range(len(wires))]
+        df['y'] = [self.positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][0][1]*(1-s) + s* self.positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][1][1] for i in range(len(wires))]
+      return df
     else:
-      df['x'] = [positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][0][0]*(1-s) + s* positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][1][0] for i in range(len(wires))]
-      df['y'] = [positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][0][1]*(1-s) + s* positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][1][1] for i in range(len(wires))]
-    return df
-  else:
-    if not isinstance(s,float) and not isinstance(s, int):
-      new_x = np.array([positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][0][0]*(1-s[i]) + s[i]* positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][1][0] for i in range(len(wires))])
-      new_y = np.array([positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][0][1]*(1-s[i]) + s[i]* positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][1][1] for i in range(len(wires))])
-    else:
-      new_x = np.array([positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][0][0]*(1-s) + s* positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][1][0] for i in range(len(wires))])
-      new_y = np.array([positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][0][1]*(1-s) + s* positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][1][1] for i in range(len(wires))])
-    return new_x, new_y
+      if not isinstance(s,float) and not isinstance(s, int):
+        new_x = np.array([self.positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][0][0]*(1-s[i]) + s[i]* self.positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][1][0] for i in range(len(wires))])
+        new_y = np.array([self.positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][0][1]*(1-s[i]) + s[i]* self.positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][1][1] for i in range(len(wires))])
+      else:
+        new_x = np.array([self.positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][0][0]*(1-s) + s* self.positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][1][0] for i in range(len(wires))])
+        new_y = np.array([self.positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][0][1]*(1-s) + s* self.positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][1][1] for i in range(len(wires))])
+      return new_x, new_y
 
 def get_charge(ptype):
   if ptype in ["Electron", "Muon", "Pi-", "K-",'AntiProton']:
@@ -83,7 +83,8 @@ def get_charge(ptype):
     return 0
 
 class CDC_plot():
-  def __init__(self, title, event=0, showTrack = False, showHits = False, showlegend=False):
+  def __init__(self, title, wire_positions, event=0, showTrack = False, showHits = False, showlegend=False):
+    self.wirePositions = wire_positions
     self.figure = go.FigureWidget()
     self.figure.update_layout(xaxis_range=[-60,60], yaxis_range=[-60,60],width=500,height=500,showlegend=showlegend,title=title,xaxis_title="X", yaxis_title="Y")
     self.figure.add_shape(type="circle", xref="x", yref="y", x0=-10.5, y0=-10.5, x1=10.5, y1=10.5, line_color="black")
@@ -97,7 +98,7 @@ class CDC_plot():
       self.vz = event['vz']
       self.ring = event['ring']
       self.straw = event['straw']
-      df = ring_wire_to_x_y(self.ring,self.straw,75,dataframe=True)
+      df = self.wirePositions.position(self.ring,self.straw,75,dataframe=True)
       self.figure.add_scatter(x=df['x'].to_numpy(),y=df['y'].to_numpy(),mode='markers',text = ["Ring: " + str(row['ring']) + "\n Wire: " + str(row['wire']) for row in df.iloc],hoverinfo='text',marker={"size":3})
     if showTrack:
       self.figure.add_scatter(mode='lines',name='track',marker={"color":'red'})
@@ -124,7 +125,7 @@ class CDC_plot():
     r_curvature = (center_x**2 + center_y**2)**0.5
     theta_curvature = np.arctan2(-1*center_y,-1*center_x)
     if show_hits:
-      new_x,new_y = ring_wire_to_x_y(self.ring,self.straw,z0/175)
+      new_x,new_y = self.wirePositions.position(self.ring,self.straw,z0/175)
       theta_hits= np.arctan2(new_y-center_y,new_x-center_x)
       for i in range(len(theta_hits)):
         theta_hits[i]-= theta_curvature
@@ -132,7 +133,7 @@ class CDC_plot():
         if theta_hits[i] <0:
           theta_hits[i] += 2*np.pi
       for i in range(len(self.ring)):
-        new_x,new_y = ring_wire_to_x_y(self.ring,self.straw,[(z0 +r_curvature*theta_hits[i]*np.tan(z_angle))/175 for i in range(len(self.ring))])
+        new_x,new_y = self.wirePositions.position(self.ring,self.straw,[(z0 +r_curvature*theta_hits[i]*np.tan(z_angle))/175 for i in range(len(self.ring))])
     if show_track:
       t_curve = np.linspace(0,t_max,1000)
       x_track = x_coord(r_curvature,theta_curvature,center_x,t_curve,charge)

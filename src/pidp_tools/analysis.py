@@ -117,6 +117,14 @@ class ConfusionMatrix():
 
     self.confusion_matrix = np.zeros((nYticks,nXticks))
     for i in range(len(predictions)):
+      print(identities[i])
+      print(type(identities[i]))
+      print(self.categories.index(particle_list[identities[i]]))
+      print("____________")
+      print(predictions[i])
+      print(type(predictions[i]))
+      print(self.categories.index(particle_list[predictions[i]]))
+
       self.confusion_matrix[self.categories.index(particle_list[identities[i]])][self.categories.index(particle_list[predictions[i]])] += 1
 
     """

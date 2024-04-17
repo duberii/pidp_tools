@@ -106,11 +106,12 @@ class ConfusionMatrix():
     self.display_matrix(title)
   
   @classmethod
-  def from_predictions(self, labels, predictions, pretty_symbols=True,purity= False,title=""):
+  def from_predictions(self, labels, predictions, pretty_symbols=True,purity= False,title="",label_selection="charge"):
     particle_list = ["Photon","KLong","Neutron","Proton","K+","Pi+","AntiMuon","Positron","AntiProton","K-","Pi-","Muon","Electron","No ID"]
     particle_array = np.array(particle_list)
     self.purity = purity
     fig, ax = plt.subplots()
+    self.label_selection = label_selection
 
     if isinstance(labels[0],str):
       labels = [particle_list.index(label) for label in labels]
@@ -124,13 +125,14 @@ class ConfusionMatrix():
     return self
 
   @classmethod
-  def from_model(self, model, df, target="Generated As", pretty_symbols=True, title="", purity=False, match_hypothesis=False):
+  def from_model(self, model, df, target="Generated As", pretty_symbols=True, title="", purity=False, match_hypothesis=False, label_selection="charge"):
     particle_list = ["Photon","KLong","Neutron","Proton","K+","Pi+","AntiMuon","Positron","AntiProton","K-","Pi-","Muon","Electron","No ID"]
     particle_array = np.array(particle_list)
     dataset = df.copy().reset_index(drop=True)
     fig, ax = plt.subplots()
     predictions = []
     identities = []
+    self.label_selection = label_selection
     data_to_test = dataset[[column for column in model.feature_names_in_]]
 
     if match_hypothesis:

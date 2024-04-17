@@ -89,8 +89,17 @@ class ConfusionMatrix():
     unique_targets = dataset[target].unique()
     self.categories = [particle_list[i] for i in range(14) if i in unique_predictions or i in unique_targets]
     print(self.categories)
+    print(type(self.categories))
+    print(type(self.categories[0]))
+    print("___________")
     print(unique_predictions)
+    print(type(unique_predictions))
+    print(type(unique_predictions[0]))
+    print("___________")
     print(unique_targets)
+    print(type(unique_targets))
+    print(type(unique_targets[0]))
+    print("___________")
     """
     Sets the number of ticks depedning on if the `No ID` column is included.
     """

@@ -91,8 +91,9 @@ class ConfusionMatrix():
     self.confusion_matrix = np.zeros((13,14))
     for i in range(len(predictions)):
       self.confusion_matrix[int(identities[i])][int(predictions[i])] += 1
-    non_empty_columns = [i for i in range(14) if np.any(self.confusion_matrix[i,:])]
-    non_empty_rows = [i for i in range(13) if np.any(self.confusion_matrix[:,i])]
+
+    non_empty_columns = [i for i in range(14) if np.any(self.confusion_matrix[:, i])]
+    non_empty_rows = [i for i in range(13) if np.any(self.confusion_matrix[i,:])]
 
     particle_array = np.array(particle_list)
     self.confusion_matrix = self.confusion_matrix[non_empty_rows, :]
@@ -164,8 +165,8 @@ class ConfusionMatrix():
     for i in range(len(predictions)):
       self.confusion_matrix[labels[i]][predictions[i]] += 1
 
-    non_empty_columns = [i for i in range(14) if np.any(self.confusion_matrix[i,:])]
-    non_empty_rows = [i for i in range(13) if np.any(self.confusion_matrix[:,i])]
+    non_empty_columns = [i for i in range(14) if np.any(self.confusion_matrix[:, i])]
+    non_empty_rows = [i for i in range(13) if np.any(self.confusion_matrix[i,:])]
 
     particle_array = np.array(particle_list)
     self.confusion_matrix = self.confusion_matrix[non_empty_rows, :]
@@ -243,8 +244,8 @@ class ConfusionMatrix():
     for i in range(len(predictions)):
       self.confusion_matrix[identities[i]][predictions[i]] += 1
     
-    non_empty_columns = [i for i in range(14) if np.any(self.confusion_matrix[i,:])]
-    non_empty_rows = [i for i in range(13) if np.any(self.confusion_matrix[:,i])]
+    non_empty_columns = [i for i in range(14) if np.any(self.confusion_matrix[:, i])]
+    non_empty_rows = [i for i in range(13) if np.any(self.confusion_matrix[i,:])]
 
     particle_array = np.array(particle_list)
     self.confusion_matrix = self.confusion_matrix[non_empty_rows, :]

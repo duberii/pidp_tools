@@ -106,7 +106,7 @@ class ConfusionMatrix():
 
     self.confusion_matrix = np.zeros((nYticks,nXticks))
     for i in range(len(predictions)):
-      self.confusion_matrix[identities[i]][predictions[i]] += 1
+      self.confusion_matrix[self.categories.index(particle_list[identities[i]])][self.categories.index(particle_list[predictions[i]])] += 1
 
     """
     Normalizes the confusion matrix. If the purity option is set, the matrix is transposed first, normalized
@@ -171,7 +171,7 @@ class ConfusionMatrix():
       nYticks = len(self.categories)
     self.confusion_matrix = np.zeros((nYticks,nXticks))
     for i in range(len(predictions)):
-      self.confusion_matrix[labels[i]][predictions[i]] += 1
+      self.confusion_matrix[self.categories.index(particle_list[labels[i]])][self.categories.index(particle_list[predictions[i]])] += 1
     if self.purity:
       self.confusion_matrix = np.transpose(self.confusion_matrix)
     for i in range(len(self.confusion_matrix)):
@@ -246,7 +246,7 @@ class ConfusionMatrix():
       nYticks = len(self.categories)
     self.confusion_matrix = np.zeros((nYticks,nXticks))
     for i in range(len(predictions)):
-      self.confusion_matrix[identities[i]][predictions[i]] += 1
+      self.confusion_matrix[self.categories.index(particle_list[identities[i]])][self.categories.index(particle_list[predictions[i]])] += 1
     if self.purity:
       self.confusion_matrix = np.transpose(self.confusion_matrix)
     for i in range(len(self.confusion_matrix)):

@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from pidp_tools.formatting import format_labels
 import sklearn.metrics
 import joblib
+import tqdm
 
 def install_ROOT():
   import subprocess

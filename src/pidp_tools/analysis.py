@@ -85,21 +85,10 @@ class ConfusionMatrix():
       starting_index = ending_index
 
 
-    unique_predictions = list(set(predictions))
-    unique_targets = dataset[target].unique()
+    unique_predictions = [int(i) for i in list(set(predictions))]
+    unique_targets = [int(i) for i in dataset[target].unique()]
     self.categories = [particle_list[i] for i in range(14) if i in unique_predictions or i in unique_targets]
-    print(self.categories)
-    print(type(self.categories))
-    print(type(self.categories[0]))
-    print("___________")
-    print(unique_predictions)
-    print(type(unique_predictions))
-    print(type(unique_predictions[0]))
-    print("___________")
-    print(unique_targets)
-    print(type(unique_targets))
-    print(type(unique_targets[0]))
-    print("___________")
+
     """
     Sets the number of ticks depedning on if the `No ID` column is included.
     """
@@ -117,15 +106,7 @@ class ConfusionMatrix():
 
     self.confusion_matrix = np.zeros((nYticks,nXticks))
     for i in range(len(predictions)):
-      print(identities[i])
-      print(type(identities[i]))
-      print(self.categories.index(particle_list[identities[i]]))
-      print("____________")
-      print(predictions[i])
-      print(type(predictions[i]))
-      print(self.categories.index(particle_list[predictions[i]]))
-
-      self.confusion_matrix[self.categories.index(particle_list[identities[i]])][self.categories.index(particle_list[predictions[i]])] += 1
+      self.confusion_matrix[self.categories.index(particle_list[int(identities[i])])][self.categories.index(particle_list[int(predictions[i])])] += 1
 
     """
     Normalizes the confusion matrix. If the purity option is set, the matrix is transposed first, normalized

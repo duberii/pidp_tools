@@ -27,6 +27,14 @@ def install_ROOT():
   ctypes.cdll.LoadLibrary('/content/root_build/lib//libThread.so')
   ctypes.cdll.LoadLibrary('/content/root_build/lib//libTreePlayer.so')
 
+def get_charge(ptype):
+  if ptype in ["Electron", "Muon", "Pi-", "K-",'AntiProton',3,4,5,6,7]:
+    return -1
+  elif ptype in ["Positron","AntiMuon", "Pi+", "K+", "Proton",8,9,10,11,12]:
+    return 1
+  else:
+    return 0
+
 def round_accuracies(num):
   new_num = round(num,2)
   if new_num == 0.00:
@@ -57,18 +65,37 @@ def most_frequent(predictions):
 class ConfusionMatrix():
   def __init__(self, estimator, df, target="Generated As", pretty_symbols=True, title="", purity=False):
     particle_list = ["Photon","KLong","Neutron","Proton","K+","Pi+","AntiMuon","Positron","AntiProton","K-","Pi-","Muon","Electron","No ID"]
+    particle_array = np.array(particle_list)
     dataset = df.copy().reset_index(drop=True)
     fig, ax = plt.subplots()
     predictions = []
     identities = []
+
     if isinstance(df['Hypothesis'][0],np.int64) or isinstance(df['Hypothesis'][0],int):
       dataset['Hypothesis']=dataset['Hypothesis'].apply(lambda x: particle_list[x])
     if isinstance(df['Generated As'][0],np.int64) or isinstance(df['Generated As'][0],int):
       dataset['Generated As']=dataset['Generated As'].apply(lambda x: particle_list[x])
+
     predictions_full = dataset.apply(estimator,axis=1)
     predictions_full = predictions_full.apply(particle_list.index)
+
     dataset['Hypothesis'] = dataset['Hypothesis'].apply(particle_list.index)
     dataset['Generated As'] = dataset['Generated As'].apply(particle_list.index)
+    included_particles = dataset['Generated As'].unique()
+
+    charges = np.array([get_charge(i) for i in included_particles])
+    if np.all(charges):
+      self.included_particles = [3,4,5,6,7,8,9,10,11,12]
+    elif not np.any(charges):
+      self.included_particles = [0,1,2]
+    else:
+      self.included_particles = list(range(13))
+    
+    self.x_labels = particle_array[[*self.included_particles, 13]]
+    self.y_labels = particle_array[self.included_particles]
+    nXticks = len(self.x_labels)
+    nYticks = len(self.y_labels)
+
     nRows = len(dataset.index)
     starting_index = 0
     self.purity= purity
@@ -93,17 +120,8 @@ class ConfusionMatrix():
     for i in range(len(predictions)):
       self.confusion_matrix[int(identities[i])][int(predictions[i])] += 1
 
-    non_empty_columns = [i for i in range(14) if np.any(self.confusion_matrix[:, i])]
-    non_empty_rows = [i for i in range(13) if np.any(self.confusion_matrix[i,:])]
-
-    particle_array = np.array(particle_list)
-    self.confusion_matrix = self.confusion_matrix[non_empty_rows, :]
-    self.y_labels = particle_array[non_empty_rows]
-    nYticks = self.confusion_matrix.shape[0]
-
-    self.confusion_matrix = self.confusion_matrix[:,non_empty_columns]
-    self.x_labels = particle_array[non_empty_columns]
-    nXticks = self.confusion_matrix.shape[1]
+    self.confusion_matrix = self.confusion_matrix[self.included_particles, :]
+    self.confusion_matrix = self.confusion_matrix[:,[*self.included_particles,13]]
 
     """
     Normalizes the confusion matrix. If the purity option is set, the matrix is transposed first, normalized
@@ -113,10 +131,14 @@ class ConfusionMatrix():
 
     if self.purity:
       self.confusion_matrix = np.transpose(self.confusion_matrix)
+
     for i in range(len(self.confusion_matrix)):
       self.confusion_matrix[i]= self.confusion_matrix[i]/sum(self.confusion_matrix[i])
+    
     if self.purity:
       self.confusion_matrix = np.transpose(self.confusion_matrix)
+
+    np.nan_to_num(self.confusion_matrix, copy=False)
 
     """
     Creates and displays the confusion matrix
@@ -152,8 +174,10 @@ class ConfusionMatrix():
   @classmethod
   def from_predictions(self, labels, predictions, pretty_symbols=True,purity= False):
     particle_list = ["Photon","KLong","Neutron","Proton","K+","Pi+","AntiMuon","Positron","AntiProton","K-","Pi-","Muon","Electron","No ID"]
+    particle_array = np.array(particle_list)
     self.purity = purity
     fig, ax = plt.subplots()
+
     if isinstance(labels[0],str):
       labels = [particle_list.index(label) for label in labels]
     if isinstance(predictions[0],str):
@@ -161,30 +185,31 @@ class ConfusionMatrix():
 
     labels = [int(i) for i in labels]
     predictions = [int(i) for i in predictions]
+    self.included_particles = list(set(labels + predictions))
+    
+    self.x_labels = particle_array[self.included_particles]
+    self.y_labels = particle_array[self.included_particles]
+    nXticks = len(self.x_labels)
+    nYticks = len(self.y_labels)
 
     self.confusion_matrix = np.zeros((13,14))
     for i in range(len(predictions)):
       self.confusion_matrix[labels[i]][predictions[i]] += 1
 
-    non_empty_columns = [i for i in range(14) if np.any(self.confusion_matrix[:, i])]
-    non_empty_rows = [i for i in range(13) if np.any(self.confusion_matrix[i,:])]
-
-    particle_array = np.array(particle_list)
-    self.confusion_matrix = self.confusion_matrix[non_empty_rows, :]
-    self.y_labels = particle_array[non_empty_rows]
-    nYticks = self.confusion_matrix.shape[0]
-
-    self.confusion_matrix = self.confusion_matrix[:,non_empty_columns]
-    self.x_labels = particle_array[non_empty_columns]
-    nXticks = self.confusion_matrix.shape[1]
+    self.confusion_matrix = self.confusion_matrix[self.included_particles, :]
+    self.confusion_matrix = self.confusion_matrix[:,self.included_particles]
 
     if self.purity:
       self.confusion_matrix = np.transpose(self.confusion_matrix)
+
     for i in range(len(self.confusion_matrix)):
       self.confusion_matrix[i]= self.confusion_matrix[i]/sum(self.confusion_matrix[i])
+
     if self.purity:
       self.confusion_matrix = np.transpose(self.confusion_matrix)
+
     np.nan_to_num(self.confusion_matrix, copy=False)
+
     self.im_ = ax.imshow(self.confusion_matrix)
     cmap_min, cmap_max = self.im_.cmap(0), self.im_.cmap(1.0)
     self.text_ = np.empty_like(self.confusion_matrix, dtype=object)
@@ -213,14 +238,17 @@ class ConfusionMatrix():
   @classmethod
   def from_model(self, model, df, target="Generated As", pretty_symbols=True, title="", purity=False, match_hypothesis=False):
     particle_list = ["Photon","KLong","Neutron","Proton","K+","Pi+","AntiMuon","Positron","AntiProton","K-","Pi-","Muon","Electron","No ID"]
+    particle_array = np.array(particle_list)
     dataset = df.copy().reset_index(drop=True)
     fig, ax = plt.subplots()
     predictions = []
     identities = []
     data_to_test = dataset[[column for column in model.feature_names_in_]]
+
     if match_hypothesis:
       prediction_confidences = [max(probs) for probs in model.predict_proba(data_to_test)]
     raw_predictions = model.predict(data_to_test)
+
     if isinstance(raw_predictions[0], str):
       predictions_full = [particle_list.index(i) for i in raw_predictions]
     else:
@@ -229,9 +257,25 @@ class ConfusionMatrix():
       dataset['Hypothesis']=dataset['Hypothesis'].apply(particle_list.index)
     if isinstance(df['Generated As'][0],str):
       dataset['Generated As']=dataset['Generated As'].apply(particle_list.index)
+    included_particles = dataset['Generated As'].unique()
+
+    charges = np.array([get_charge(i) for i in included_particles])
+    if np.all(charges):
+      self.included_particles = [3,4,5,6,7,8,9,10,11,12]
+    elif not np.any(charges):
+      self.included_particles = [0,1,2]
+    else:
+      self.included_particles = list(range(13))
+    
+    self.x_labels = particle_array[[*self.included_particles, 13]]
+    self.y_labels = particle_array[self.included_particles]
+    nXticks = len(self.x_labels)
+    nYticks = len(self.y_labels)
+
     nRows = len(dataset.index)
     starting_index = 0
     self.purity= purity
+
     while starting_index < nRows - 1 :
       ending_index = starting_index + dataset['Number of Hypotheses'][starting_index]
       if match_hypothesis:
@@ -240,21 +284,13 @@ class ConfusionMatrix():
         predictions.append(most_frequent(predictions_full[starting_index:ending_index]))
       identities.append(dataset['Generated As'][starting_index])
       starting_index = ending_index
+    
     self.confusion_matrix = np.zeros((13,14))
     for i in range(len(predictions)):
       self.confusion_matrix[identities[i]][predictions[i]] += 1
     
-    non_empty_columns = [i for i in range(14) if np.any(self.confusion_matrix[:, i])]
-    non_empty_rows = [i for i in range(13) if np.any(self.confusion_matrix[i,:])]
-
-    particle_array = np.array(particle_list)
-    self.confusion_matrix = self.confusion_matrix[non_empty_rows, :]
-    self.y_labels = particle_array[non_empty_rows]
-    nYticks = self.confusion_matrix.shape[0]
-
-    self.confusion_matrix = self.confusion_matrix[:,non_empty_columns]
-    self.x_labels = particle_array[non_empty_columns]
-    nXticks = self.confusion_matrix.shape[1]
+    self.confusion_matrix = self.confusion_matrix[self.included_particles, :]
+    self.confusion_matrix = self.confusion_matrix[:,[*self.included_particles,13]]
 
     if self.purity:
       self.confusion_matrix = np.transpose(self.confusion_matrix)
@@ -262,6 +298,7 @@ class ConfusionMatrix():
       self.confusion_matrix[i]= self.confusion_matrix[i]/sum(self.confusion_matrix[i])
     if self.purity:
       self.confusion_matrix = np.transpose(self.confusion_matrix)
+    
     np.nan_to_num(self.confusion_matrix, copy=False)
     self.im_ = ax.imshow(self.confusion_matrix)
     self.text_ = None

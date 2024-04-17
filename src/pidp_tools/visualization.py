@@ -5,6 +5,7 @@ import xml.etree.ElementTree as ET
 from ipywidgets import interact, interactive, fixed, interact_manual, widgets, HBox, VBox, Layout
 import ipywidgets as widgets
 import subprocess
+from pidp_tools.analysis import get_charge
 
 def plot_vector(x_val,y_val,z_val):
   x = [0, x_val]
@@ -73,14 +74,6 @@ class wirePositions():
         new_x = np.array([self.positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][0][0]*(1-s) + s* self.positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][1][0] for i in range(len(wires))])
         new_y = np.array([self.positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][0][1]*(1-s) + s* self.positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][1][1] for i in range(len(wires))])
       return new_x, new_y
-
-def get_charge(ptype):
-  if ptype in ["Electron", "Muon", "Pi-", "K-",'AntiProton']:
-    return -1
-  elif ptype in ["Positron","AntiMuon", "Pi+", "K+", "Proton"]:
-    return 1
-  else:
-    return 0
 
 class CDC_plot():
   def __init__(self, title, wire_positions, event=0, showTrack = False, showHits = False, showlegend=False):

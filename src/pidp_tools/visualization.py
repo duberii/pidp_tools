@@ -131,15 +131,15 @@ class CDC_plot():
       t_curve = np.linspace(0,t_max,1000)
       x_track = x_coord(r_curvature,theta_curvature,center_x,t_curve,charge)
       y_track = y_coord(r_curvature,theta_curvature,center_y,t_curve,charge)
-    with fig.figure.batch_update():
+    with self.figure.batch_update():
       if show_track:
-        fig.figure.data[len(fig.figure.data)-1]['x']=x_track
-        fig.figure.data[len(fig.figure.data)-1]['y']=y_track
-      fig.update_layout(width=500,height=500,showlegend=False)
+        self.figure.data[len(self.figure.data)-1]['x']=x_track
+        self.figure.data[len(self.figure.data)-1]['y']=y_track
+      self.update_layout(width=500,height=500,showlegend=False)
       if show_hits:
-        fig.figure.data[0]['x']=new_x
-        fig.figure.data[0]['y']=new_y
-    fig.show()
+        self.figure.data[0]['x']=new_x
+        self.figure.data[0]['y']=new_y
+    self.show()
   def distance_to_curve(self,x,y):
     center_x = self.charge*330*self.py/1.7
     center_y = -330*self.charge*self.px/1.7
@@ -152,8 +152,8 @@ class CDC_plot():
     return rmse
   def calc_z0(self, quiet=False, return_rmse=False):
     rmses = {}
-    center_x = self.charge*330*self.py/B
-    center_y = -330*self.charge*self.px/B
+    center_x = self.charge*330*self.py/1.7
+    center_y = -330*self.charge*self.px/1.7
     for z in np.linspace(0,150,151):
       new_x, new_y = ring_wire_to_x_y(self.ring, self.straw,z/175)
       rmses[z] = self.calculate_rmse(new_x,new_y)
@@ -200,11 +200,11 @@ class wire_plot():
     display(VBox([controls, output]))
   def update_figure(self,z=0, rings=[]):
     s= z/175
-    with fig.figure.batch_update():
+    with self.figure.batch_update():
       for i in range(len(rings)):
-        fig.figure.data[i]['x']=[(1-s)*wire[0][0]+ s*wire[1][0] for wire in positionsMatrix[int(rings[i])-1]]
-        fig.figure.data[i]['y']=[(1-s)*wire[0][1]+ s*wire[1][1] for wire in positionsMatrix[int(rings[i])-1]]
-    fig.show()
+        self.figure.data[i]['x']=[(1-s)*wire[0][0]+ s*wire[1][0] for wire in positionsMatrix[int(rings[i])-1]]
+        self.figure.data[i]['y']=[(1-s)*wire[0][1]+ s*wire[1][1] for wire in positionsMatrix[int(rings[i])-1]]
+    self.show()
 
 class interactive_image():
   def __init__(self,image_path="",x_max = 1, y_max=2*10**-5):

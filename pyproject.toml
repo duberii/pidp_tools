@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pidp_tools"
-version = "0.1.8"
+version = "0.1.9"
 authors = [
     { name="Richard Dube", email="richardddube@gmail.com"},
 ]

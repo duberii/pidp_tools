@@ -197,7 +197,6 @@ class ConfusionMatrix():
         default_text_kwargs = dict(ha="center", va="center", color=color)
         text_kwargs = {**default_text_kwargs}
         self.text_[i][j] = ax.text(j, i, text_cm, **text_kwargs)
-    display_labels = self.categories
     fig.colorbar(self.im_, ax=ax)
     if pretty_symbols:
       ax.set(xticks=np.arange(nXticks),yticks=np.arange(nYticks),xticklabels=[format_labels(x) for x in self.x_labels],yticklabels=[format_labels(x) for x in self.y_labels],ylabel="Generated As",xlabel="Identified As")
@@ -277,7 +276,6 @@ class ConfusionMatrix():
         default_text_kwargs = dict(ha="center", va="center", color=color)
         text_kwargs = {**default_text_kwargs}
         self.text_[i][j] = ax.text(j, i, text_cm, **text_kwargs)
-    display_labels = self.categories
     fig.colorbar(self.im_, ax=ax)
     if pretty_symbols:
       ax.set(xticks=np.arange(nXticks),yticks=np.arange(nYticks),xticklabels=[format_labels(x) for x in self.x_labels],yticklabels=[format_labels(y) for y in self.y_labels],ylabel="Generated As",xlabel="Identified As")

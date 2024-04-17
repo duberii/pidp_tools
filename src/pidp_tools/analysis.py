@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pidp_tools.formatting import format_labels
 import sklearn.metrics
+import joblib
 
 def install_ROOT():
   import subprocess
@@ -410,3 +411,13 @@ def feature_importance(model, test_data_full, target='Generated As', match_hypot
   plt.ylabel("Feature Importance")
   plt.xticks(rotation=90)
   plt.show()
+
+def save_model(model, path="my_model.joblib"):
+  joblib.dump(model, path)
+  print('Model saved as ' + path)
+
+def load_model(path="my_model.joblib"):
+  print("Loading model...")
+  model = joblib.load(path)
+  print("Done loading model")
+  return model

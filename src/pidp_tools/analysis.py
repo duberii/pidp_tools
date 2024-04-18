@@ -63,7 +63,7 @@ def most_frequent(predictions):
   return pred_ar[np.argmax(counts)]
 
 class ConfusionMatrix():
-  def __init__(self, estimator, df, target="Generated As", pretty_symbols=True, title="", purity=False, label_selection="square"):
+  def __init__(self, estimator, df, target="Generated As", pretty_symbols=True, title="", purity=False, label_selection="charge"):
 
     # Initialize variables
 

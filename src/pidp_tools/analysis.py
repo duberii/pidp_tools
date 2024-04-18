@@ -195,8 +195,8 @@ class ConfusionMatrix():
       case _:
         raise ValueError("Label selection must be one of the following: 'charge','all','necessary'")
     
-    nXticks = len(self.x_labels)
-    nYticks = len(self.y_labels)
+    self.nXticks = len(self.x_labels)
+    self.nYticks = len(self.y_labels)
 
     np.add.at(self.confusion_matrix,(labels,predictions),1)
     if np.sum(self.confusion_matrix[:, 13]) > 0:

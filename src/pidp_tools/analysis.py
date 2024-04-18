@@ -63,7 +63,7 @@ def most_frequent(predictions):
   return pred_ar[np.argmax(counts)]
 
 class ConfusionMatrix():
-  def __init__(self, estimator, df, target="Generated As", pretty_symbols=True, title="", purity=False, label_selection="charge"):
+  def __init__(self, estimator, df, target="Generated As", title="", purity=False, label_selection="charge"):
 
     # Initialize variables
 
@@ -106,7 +106,7 @@ class ConfusionMatrix():
     self.display_matrix(title)
   
   @classmethod
-  def from_predictions(self, labels, predictions, pretty_symbols=True,purity= False,title="",label_selection="charge"):
+  def from_predictions(self, labels, predictions,purity= False,title="",label_selection="charge"):
     particle_list = ["Photon","KLong","Neutron","Proton","K+","Pi+","AntiMuon","Positron","AntiProton","K-","Pi-","Muon","Electron","No ID"]
     particle_array = np.array(particle_list)
     self.purity = purity
@@ -125,7 +125,7 @@ class ConfusionMatrix():
     return self
 
   @classmethod
-  def from_model(self, model, df, target="Generated As", pretty_symbols=True, title="", purity=False, match_hypothesis=False, label_selection="charge"):
+  def from_model(self, model, df, target="Generated As", title="", purity=False, match_hypothesis=False, label_selection="charge"):
     particle_list = ["Photon","KLong","Neutron","Proton","K+","Pi+","AntiMuon","Positron","AntiProton","K-","Pi-","Muon","Electron","No ID"]
     particle_array = np.array(particle_list)
     dataset = df.copy().reset_index(drop=True)
@@ -236,10 +236,7 @@ class ConfusionMatrix():
         self.text_[i][j] = ax.text(j, i, text_cm, **text_kwargs)
 
     fig.colorbar(self.im_, ax=ax)
-    if self.pretty_symbols:
-      ax.set(xticks=np.arange(self.nXticks),yticks=np.arange(self.nYticks),xticklabels=[format_labels(x) for x in self.x_labels],yticklabels=[format_labels(y) for y in self.y_labels],ylabel="Generated As",xlabel="Identified As")
-    else:
-      ax.set(xticks=np.arange(self.nXticks),yticks=np.arange(self.nYticks),xticklabels=self.x_labels,yticklabels=self.y_labels,ylabel="Generated As",xlabel="Identified As")
+    ax.set(xticks=np.arange(self.nXticks),yticks=np.arange(self.nYticks),xticklabels=[format_labels(x) for x in self.x_labels],yticklabels=[format_labels(y) for y in self.y_labels],ylabel="Generated As",xlabel="Identified As")
     ax.set_ylim((self.nYticks - 0.5, -0.5))
     self.figure_ = fig
     self.figure_.set_figheight(7)

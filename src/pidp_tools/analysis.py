@@ -199,7 +199,7 @@ class ConfusionMatrix():
     nYticks = len(self.y_labels)
 
     np.add.at(self.confusion_matrix,(labels,predictions),1)
-    if np.sum(self.confusion_matrix[13,:]) > 0:
+    if np.sum(self.confusion_matrix[:, 13]) > 0:
       self.confusion_matrix = self.confusion_matrix[self.included_particles, :]
       self.confusion_matrix = self.confusion_matrix[:,[*self.included_particles,13]]
     else:

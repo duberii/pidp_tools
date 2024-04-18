@@ -66,7 +66,6 @@ class ConfusionMatrix():
   def __init__(self, estimator, df, target="Generated As", title="", purity=False, label_selection="necessary"):
 
     # Initialize variables
-
     particle_list = ["Photon","KLong","Neutron","Proton","K+","Pi+","AntiMuon","Positron","AntiProton","K-","Pi-","Muon","Electron","No ID"]
     particle_array = np.array(particle_list)
     dataset = df.copy().reset_index(drop=True)
@@ -82,7 +81,10 @@ class ConfusionMatrix():
     if isinstance(df['Generated As'][0],np.int64) or isinstance(df['Generated As'][0],int):
       dataset['Generated As']=dataset['Generated As'].apply(lambda x: particle_list[x])
 
-    predictions_full = dataset.apply(estimator,axis=1)
+    try:
+      predictions_full = estimator(dataset)
+    except:
+      predictions_full = dataset.apply(estimator,axis=1)
 
     #Converts predictions, as well as the hypothesis and generated as columns, back to integers.
 

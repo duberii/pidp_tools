@@ -63,7 +63,7 @@ def most_frequent(predictions):
   return pred_ar[np.argmax(counts)]
 
 class ConfusionMatrix():
-  def __init__(self, estimator, df, target="Generated As", title="", purity=False, label_selection="charge"):
+  def __init__(self, estimator, df, target="Generated As", title="", purity=False, label_selection="square"):
 
     # Initialize variables
 
@@ -172,10 +172,11 @@ class ConfusionMatrix():
     match self.label_selection:
       case 'charge':
         included_particles = list(set(labels + predictions))
-        charges = np.array([get_charge(i) for i in included_particles])
-        if np.all(charges):
+        contains_neutral_particles = np.any([i in included_particles for i in [0,1,2]])
+        contains_charged_particles = np.any([i in included_particles for i in [3,4,5,6,7,8,9,10,11,12]])
+        if contains_charged_particles and not contains_neutral_particles:
           self.included_particles = [3,4,5,6,7,8,9,10,11,12]
-        elif not np.any(charges):
+        elif contains_neutral_particles and not contains_charged_particles:
           self.included_particles = [0,1,2]
         else:
           self.included_particles = list(range(13))
@@ -218,6 +219,7 @@ class ConfusionMatrix():
 
     np.nan_to_num(self.confusion_matrix, copy=False)
 
+    
   def display_matrix(self, title):
     fig, ax = plt.subplots()
     self.im_ = ax.imshow(self.confusion_matrix)

@@ -5,6 +5,7 @@ import sklearn.metrics
 import joblib
 import tqdm
 import pandas as pd
+import warnings
 
 def install_ROOT():
   import subprocess
@@ -234,7 +235,6 @@ class ConfusionMatrix():
       self.x_labels = [i for i in self.x_labels if i != "No ID"]
       self.nXticks -= 1
 
-    import warnings
     warnings.filterwarnings("ignore", category=RuntimeWarning)
 
     if self.purity:

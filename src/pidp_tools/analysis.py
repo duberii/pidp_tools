@@ -84,7 +84,7 @@ class ConfusionMatrix():
     self.display_matrix(title)
   
   @classmethod
-  def from_estimator(cls, estimator, dataset, target='Generated As', title="", purity=False, label_selection="necessary"):
+  def from_estimator(cls, estimator, df, target='Generated As', title="", purity=False, label_selection="necessary"):
 
     # Initialize variables
     particle_list = ["Photon","KLong","Neutron","Proton","K+","Pi+","AntiMuon","Positron","AntiProton","K-","Pi-","Muon","Electron","No ID"]

@@ -83,7 +83,7 @@ def TOF_TOF(particle_df):
   
 def TOF_BCal(particle_df):
   particle = particle_df.copy()
-  particle['BCal TOF Diff'] = np.abs(particle['BCal Time of Flight']-particle['BCal Calculated Time of Flight'])
+  particle['BCal TOF Diff'] = np.abs(particle['tShower']-particle['BCal Calculated Time of Flight'])
   isProton = ((particle['Hypothesis'] == "Proton") | (particle['Hypothesis'] == "AntiProton")) & ( particle['BCal TOF Diff'] <= 1)
   isK = ((particle['Hypothesis'] == "K+") | (particle['Hypothesis'] == "K-")) & (particle['BCal TOF Diff'] <= 0.75)
   isPi = ((particle['Hypothesis'] == "Pi+") | (particle['Hypothesis'] == "Pi-")) & (particle['BCal TOF Diff'] <= 1)
@@ -115,7 +115,7 @@ def TOF_SC(particle_df):
 
 def TOF_FCal(particle_df):
   particle = particle_df.copy()
-  particle['FCal TOF Diff'] = np.abs(particle['FCal Time of Flight']-particle['FCal Calculated Time of Flight'])
+  particle['FCal TOF Diff'] = np.abs(particle['tShower']-particle['FCal Calculated Time of Flight'])
   isProton = ((particle['Hypothesis'] == "Proton") | (particle['Hypothesis'] == "AntiProton")) & (particle['FCal TOF Diff'] <= 2)
   isK = ((particle['Hypothesis'] == "K+") | (particle['Hypothesis'] == "K-")) & (particle['FCal TOF Diff'] <= 2.5)
   isPi = ((particle['Hypothesis'] == "Pi+") | (particle['Hypothesis'] == "Pi-")) & (particle['FCal TOF Diff'] <= 2)
@@ -131,13 +131,13 @@ def TOF_FCal(particle_df):
 
 def TOF(particle_df):
   particle = particle_df.copy()
-  particle['BCal TOF Diff'] = np.abs(particle['BCal Time of Flight']-particle['BCal Calculated Time of Flight'])
+  particle['BCal TOF Diff'] = np.abs(particle['tShower']-particle['BCal Calculated Time of Flight'])
   particle['TOF TOF Diff'] = np.abs(particle['TOF Time of Flight']-particle['TOF Calculated Time of Flight'])
-  particle['FCal TOF Diff'] = np.abs(particle['FCal Time of Flight']-particle['FCal Calculated Time of Flight'])
+  particle['FCal TOF Diff'] = np.abs(particle['tShower']-particle['FCal Calculated Time of Flight'])
   particle['SC TOF Diff'] = np.abs(particle['SC Time of Flight']-particle['SC Calculated Time of Flight'])
-  hasBCal = particle['BCal Time of Flight'].notna()
+  hasBCal = particle['BCal Calculated Time of Flight'].notna()
   hasTOF = particle['TOF Time of Flight'].notna()
-  hasFCal = particle['FCal Time of Flight'].notna()
+  hasFCal = particle['FCal Calculated Time of Flight'].notna()
   hasSC = particle['SC Time of Flight'].notna()
   p = (particle['px']**2 + particle['py']**2 + particle['pz']**2)**0.5
   isProton = ((particle['Hypothesis'] == "Proton") | (particle['Hypothesis'] == "AntiProton")) & ((hasBCal & (particle['BCal TOF Diff'] <= 1)) | (~hasBCal & hasTOF & (particle['TOF TOF Diff'] <= 0.6)) | (~hasBCal & ~hasTOF & hasFCal & (particle['FCal TOF Diff'] <= 2)) | (~hasBCal & ~hasTOF & ~hasFCal & hasSC & (particle['SC TOF Diff'] <= 2.5)))

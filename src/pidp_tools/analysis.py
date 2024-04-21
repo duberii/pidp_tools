@@ -369,7 +369,7 @@ def feature_importance(model, test_data_full, target='Generated As', match_hypot
     starting_index = ending_index
   number_of_events = i
 
-  identities = [int(test_data[target][i]) for i, j in index_list]
+  identities = [int(test_data[target][i % length_of_df]) for i, j in index_list]
 
   if match_hypothesis:
     temp_predictions = model.predict_proba(new_test)

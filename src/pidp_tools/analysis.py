@@ -161,7 +161,7 @@ class ConfusionMatrix():
       max_confidence_indices = grouped_df['Confidence'].idxmax()
       predictions_temp = dataset[['Prediction','eventNo']].iloc[max_confidence_indices]
       
-      predictions = predictions_temp.set_index('eventNo').sort_index().reindex(list(range(number_of_events)),fill_value=13).to_list
+      predictions = predictions_temp.set_index('eventNo')['Prediction'].reindex(list(range(number_of_events)),fill_value=13).to_list()
       identities = grouped_df[target].head(1).to_list()
     else:
       dataset['Prediction'] = model.predict(data_to_test)

@@ -424,6 +424,6 @@ def view_shower_3D(df, eventNum):
         z2 = hit['z']
         x1,y1,z1 = closest_hit(each_hit_df.loc[each_hit_df['layer']<i],x2,y2,z2)
         fig.add_scatter3d(x=[x1,x2],y=[y1,y2],z=[z1,z2],mode='lines',line={'color':"rgba(99,110,250,"+str(round(hit['opacity'],2))+")",'width':8})
-  previous_layer_hits = layer_hits
+    previous_layer_hits = layer_hits
   fig.update_layout(showlegend=False)
   fig.show()

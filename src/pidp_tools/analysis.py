@@ -369,7 +369,7 @@ def feature_importance(model, test_data_full, target='Generated As', match_hypot
     starting_index = ending_index
   number_of_events = i
 
-  identities = [int(test_data[target][i % length_of_df]) for i, j in index_list]
+  identities = [int(y_test[i % length_of_df]) for i, j in index_list]
 
   if match_hypothesis:
     temp_predictions = model.predict_proba(new_test)
@@ -378,7 +378,7 @@ def feature_importance(model, test_data_full, target='Generated As', match_hypot
 
     matches_hypotheses_bool_list = (new_test['Prediction'] == new_test['Hypothesis']) | (new_test['Hypothesis'] == 13)
     matching_hypotheses = new_test.loc[matches_hypotheses_bool_list]
-    grouped_df = matching_hypotheses[['Generated As','Prediction','Confidence','eventNo']].groupby('eventNo')
+    grouped_df = matching_hypotheses[['Prediction','Confidence','eventNo']].groupby('eventNo')
     max_confidence_indices = grouped_df['Confidence'].idxmax()
     predictions_temp = new_test['Prediction'].iloc[max_confidence_indices]
       
@@ -387,7 +387,7 @@ def feature_importance(model, test_data_full, target='Generated As', match_hypot
   else:
     new_test['Prediction'] = model.predict(new_test)
     new_test['eventNo'] = event_nos
-    grouped_df = new_test[['Prediction','eventNo','Generated As']].groupby('eventNo')
+    grouped_df = new_test[['Prediction','eventNo']].groupby('eventNo')
     predictions = grouped_df['Prediction'].agg(lambda x: x.value_counts().index[0]).to_list()
     
   identities = np.array(identities, dtype= int)

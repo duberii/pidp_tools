@@ -150,7 +150,7 @@ class ConfusionMatrix():
     if match_hypothesis:
       temp_predictions = model.predict_proba(data_to_test)
       dataset['Confidence'] = [max(probs) for probs in temp_predictions]
-      dataset['Prediction'] = np.argmax(temp_predictions, axis=1)
+      dataset['Prediction'] = model.classes_[np.argmax(temp_predictions, axis=1)]
 
       identities_grouped = dataset[['Generated As','Prediction','eventNo']].groupby('eventNo')
       identities = identities_grouped['Generated As'].head(1).to_list()
@@ -162,7 +162,6 @@ class ConfusionMatrix():
       predictions_temp = dataset[['Prediction','eventNo']].iloc[max_confidence_indices]
       
       predictions = predictions_temp.set_index('eventNo')['Prediction'].reindex(list(range(number_of_events)),fill_value=13).to_list()
-      identities = grouped_df[target].head(1).to_list()
     else:
       dataset['Prediction'] = model.predict(data_to_test)
       grouped_df = dataset[['Generated As','Prediction','eventNo']].groupby('eventNo')

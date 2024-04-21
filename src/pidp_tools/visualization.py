@@ -233,3 +233,197 @@ class interactive_image():
     with self.figure.batch_update():
       self.figure.data[0]['y']=10**(math.floor(math.log(self.y_max,10))-1)*(np.exp(a*np.linspace(0,self.x_max,1000)+b)+c)
     self.show()
+
+
+def BCal_plot_2D():
+  module_points = {i:[] for i in range(48)}
+  inner_radius = 65
+  outer_radius = 87.46
+  inner_radius = 65
+  inner_module_width = 8.52
+  outer_module_width = 11.46
+  fig = go.FigureWidget()
+  fig.update_layout(xaxis_range=[-100,100], yaxis_range=[-100,100],width=520,height=500,xaxis_title="X", yaxis_title="Y")
+  for i in range(48):
+    angle = i * -1*np.pi/24 + np.pi
+    unit_vector = np.array([np.cos(angle+np.pi/2),np.sin(angle+np.pi/2)])
+    inner_radius_vector = inner_radius * np.array([np.cos(angle),np.sin(angle)])
+    outer_radius_vector = outer_radius * np.array([np.cos(angle),np.sin(angle)])
+    module_points[i].append(inner_radius_vector + inner_module_width/2 * unit_vector)
+    module_points[i].append(inner_radius_vector - inner_module_width/2 * unit_vector)
+    module_points[i].append(outer_radius_vector - outer_module_width/2 * unit_vector)
+    module_points[i].append(outer_radius_vector + outer_module_width/2 * unit_vector)
+    module_points[i].append(inner_radius_vector + inner_module_width/2 * unit_vector)
+    fig.add_scatter(x=[module_points[i][j][0] for j in range(5)],y=[module_points[i][j][1] for j in range(5)],fill="toself",name="Module " + str(i+1),mode="lines")
+  fig.show()
+
+def BCal_plot_3D():
+  module_points = {i:[] for i in range(48)}
+  inner_radius = 65
+  outer_radius = inner_radius + 22.46
+  inner_module_width = 8.52
+  outer_module_width = 11.46
+  fig = go.FigureWidget()
+  fig.update_layout(scene = {"xaxis_title":'Z', "yaxis_title":'X', 'zaxis_title':'Y'})
+  for module in range(48):
+    angle = module * np.pi/24
+    unit_vector = np.array([np.cos(angle+np.pi/2),np.sin(angle+np.pi/2),0])
+    inner_radius_vector = inner_radius * np.array([np.cos(angle),np.sin(angle),0])
+    outer_radius_vector = outer_radius * np.array([np.cos(angle),np.sin(angle),0])
+    module_points[module].append(inner_radius_vector + inner_module_width/2 * unit_vector)
+    module_points[module].append(inner_radius_vector - inner_module_width/2 * unit_vector)
+    module_points[module].append(outer_radius_vector - outer_module_width/2 * unit_vector)
+    module_points[module].append(outer_radius_vector + outer_module_width/2 * unit_vector)
+    module_points[module].append(inner_radius_vector + inner_module_width/2 * unit_vector + np.array([0,0,390]))
+    module_points[module].append(inner_radius_vector - inner_module_width/2 * unit_vector + np.array([0,0,390]))
+    module_points[module].append(outer_radius_vector - outer_module_width/2 * unit_vector + np.array([0,0,390]))
+    module_points[module].append(outer_radius_vector + outer_module_width/2 * unit_vector + np.array([0,0,390]))
+    i = [0,0,0,3,0,1,1,2,2,3,4,4]
+    j = [1,2,4,4,1,4,2,5,3,6,5,6]
+    k = [2,3,3,7,4,5,5,6,6,7,6,7]
+    fig.add_trace(go.Mesh3d(y=[pt[0] for pt in module_points[module]],z=[pt[1] for pt in module_points[module]],x=[pt[2] for pt in module_points[module]],name="Module " + str(module+1),flatshading=True,i=i,j=j,k=k,hovertemplate="Module " + str(module+1) + "<extra></extra>"))
+  fig.show()
+
+def BCal_module():
+  def calculate_x(layer,sector):
+    return 8.51*sector/4 + 1.475*(sector-2)/2*((layer+1)**2-layer-1)/20
+  def calculate_y(layer,sector):
+    return 22.46*((layer+1)**2-layer-1)/20
+  fig = go.FigureWidget()
+  fig.update_layout(xaxis_range=[-3,10], yaxis_range=[-1,25],width=600,height=600,xaxis_title="X", yaxis_title="Y",showlegend=False)
+  fig.update_yaxes(scaleanchor="x",scaleratio=1)
+  for layer in range(1,5):
+    for sector in range(1,5):
+      fig.add_scatter(x=[calculate_x(layer,sector),calculate_x(layer,sector-1),calculate_x(layer-1,sector-1),calculate_x(layer-1,sector)],y=[calculate_y(layer,sector),calculate_y(layer,sector-1),calculate_y(layer-1,sector-1),calculate_y(layer-1,sector)],fill="toself", mode="lines",name="Layer: " + str(layer) + ", Sector: " + str(sector),hoverinfo="text")
+      fig.update()
+  fig.show()
+
+
+def view_shower_2D(df, eventNum):
+  def closest_hit(prev_layer,x,y):
+    prev_distance = 10000000
+    solution = (0,0)
+    for hit in prev_layer.iloc:
+      distance = ((x-hit['x'])**2 + (y-hit['y'])**2)**0.5
+      if distance < prev_distance:
+        solution = (hit['x'],hit['y'],hit['opacity'])
+        prev_distance = distance
+    if prev_distance > ((x)**2 + (y)**2)**0.5:
+      return (x,y, 0)
+    else:
+      return solution
+  event = df.iloc[eventNum]
+  inner_radius = 65
+  outer_radius = 87.46
+  inner_module_width = 8.52
+  fig = go.FigureWidget()
+  fig.update_layout(xaxis_range=[-100,100], yaxis_range=[-100,100],width=520,height=500,xaxis_title="X", yaxis_title="Y")
+  points = {'x':[],'y':[],'z':[]}
+  energies = []
+  for i in range(len(event['sector'])):
+    angle = event['module'][i] * -1*np.pi/24 + np.pi
+    unit_radius_vector = np.array([np.cos(angle),np.sin(angle)])
+    unit_vector = np.array([np.cos(angle+np.pi/2),np.sin(angle+np.pi/2)])
+    inner_radius_vector = inner_radius * np.array([np.cos(angle),np.sin(angle)])
+    origin = inner_radius_vector - inner_module_width/2 * unit_vector
+    position = origin + unit_vector * (8.51*(event['sector'][i]-0.5)/4 + 1.475*(event['sector'][i]-0.5)/2*((event['layer'][i]+0.5)**2-event['layer'][i]-0.5)/20)
+    position += 22.46*((event['layer'][i]+0.5)**2-event['layer'][i]-0.5)/20 *unit_radius_vector
+    points['x'].append(position[0])
+    points['y'].append(position[1])
+    z = 1/30*16.75*(event['t_up'][i]-event['t_down'][i])
+    points['z'].append(z)
+    energies.append(2/130000*(event['pulse_integral_up'][i]*np.exp(z/525)+event['pulse_integral_down'][i]*np.exp((390-z)/525)))
+  each_hit_df = pd.DataFrame()
+  each_hit_df['module'] = event['module']
+  each_hit_df['sector'] = event['sector']
+  each_hit_df['layer'] = event['layer']
+  each_hit_df['x'] = points['x']
+  each_hit_df['y'] = points['y']
+  each_hit_df['z'] = points['z']
+  each_hit_df['E'] = energies
+  each_hit_df['opacity'] = 0.75*(np.array(energies)-min(energies))/(max(energies)-min(energies))+0.25
+  opacities = np.array(energies)/max(energies)
+  previous_layer_hits = pd.DataFrame()
+  for i in range(1,5):
+    layer_hits = each_hit_df.loc[each_hit_df['layer']==i]
+    if i != 1 and len(previous_layer_hits.index)>0 and len(layer_hits.index)>0:
+      for hit in layer_hits.iloc:
+        angle = hit['module'] * -1*np.pi/24 + np.pi
+        unit_radius_vector = np.array([np.cos(angle),np.sin(angle)])
+        unit_vector = np.array([np.cos(angle+np.pi/2),np.sin(angle+np.pi/2)])
+        inner_radius_vector = inner_radius * np.array([np.cos(angle),np.sin(angle)])
+        origin = inner_radius_vector - inner_module_width/2 * unit_vector
+        position = origin + unit_vector * (8.51*(hit['sector']-0.5)/4 + 1.475*(hit['sector']-0.5)/2*((hit['layer']+0.5)**2-hit['layer']-0.5)/20)
+        position += 22.46*((hit['layer']+0.5)**2-hit['layer']-0.5)/20 *unit_radius_vector
+        x2 = position[0]
+        y2= position[1]
+        x1,y1 = closest_hit(each_hit_df.loc[each_hit_df['layer']<i],x2,y2)
+        fig.add_shape(type="line",x0=x1,y0=y1,x1=x2,y1=y2,opacity=hit['opacity'],line_color="#636EFA")
+    previous_layer_hits = layer_hits
+  fig.add_scatter(x=points['x'],y=points['y'],mode='markers',marker = {'opacity':opacities})
+  fig.add_shape(type="circle", xref="x", yref="y", x0=-1*inner_radius, y0=-1*inner_radius, x1=inner_radius, y1=inner_radius, line_color="black")
+  fig.add_shape(type="circle", xref="x", yref="y", x0=-1*outer_radius, y0=-1*outer_radius, x1=outer_radius, y1=outer_radius, line_color="black")
+  fig.show()
+
+def view_shower_3D(df, eventNum):
+  def closest_hit(prev_layer,x,y,z):
+    prev_distance = 10000000
+    solution = (0,0,0)
+    for hit in prev_layer.iloc:
+      distance = ((x-hit['x'])**2 + (y-hit['y'])**2 + (z-hit['z'])**2)**0.5
+      if distance < prev_distance:
+        solution = (hit['x'],hit['y'],hit['z'])
+        prev_distance = distance
+    if prev_distance > ((2*x)**2 + (2*y)**2)**0.5:
+      return (x,y,z)
+    else:
+      return solution
+  event = df.iloc[eventNum]
+  inner_radius = 65
+  inner_module_width = 8.52
+  fig = go.FigureWidget()
+  fig.update_layout(xaxis_range=[-100,100], yaxis_range=[-100,100],width=520,height=500,xaxis_title="X", yaxis_title="Y")
+  points = {'x':[],'y':[],'z':[]}
+  energies = []
+  for i in range(len(event['sector'])):
+    angle = event['module'][i] * -1*np.pi/24 + np.pi
+    unit_radius_vector = np.array([np.cos(angle),np.sin(angle)])
+    unit_vector = np.array([np.cos(angle+np.pi/2),np.sin(angle+np.pi/2)])
+    inner_radius_vector = inner_radius * np.array([np.cos(angle),np.sin(angle)])
+    origin = inner_radius_vector - inner_module_width/2 * unit_vector
+    position = origin + unit_vector * (8.51*(event['sector'][i]-0.5)/4 + 1.475*(event['sector'][i]-0.5)/2*((event['layer'][i]+0.5)**2-event['layer'][i]-0.5)/20)
+    position += 22.46*((event['layer'][i]+0.5)**2-event['layer'][i]-0.5)/20 *unit_radius_vector
+    points['x'].append(position[0])
+    points['y'].append(position[1])
+    z = 1/30*16.75*(event['t_up'][i]-event['t_down'][i])
+    points['z'].append(z)
+    energies.append(2/130000*(event['pulse_integral_up'][i]*np.exp(z/525)+event['pulse_integral_down'][i]*np.exp((390-z)/525)))
+  each_hit_df = pd.DataFrame()
+  each_hit_df['module'] = event['module']
+  each_hit_df['sector'] = event['sector']
+  each_hit_df['layer'] = event['layer']
+  each_hit_df['x'] = points['x']
+  each_hit_df['y'] = points['y']
+  each_hit_df['z'] = points['z']
+  each_hit_df['E'] = energies
+  each_hit_df['opacity'] = 0.5*(np.array(energies)-min(energies))/(max(energies)-min(energies))+0.5
+  previous_layer_hits = pd.DataFrame()
+  for i in range(1,5):
+    layer_hits = each_hit_df.loc[each_hit_df['layer']==i]
+    if i != 1 and len(previous_layer_hits.index)>0 and len(layer_hits.index)>0:
+      for hit in layer_hits.iloc:
+        angle = hit['module'] * -1*np.pi/24 + np.pi
+        unit_radius_vector = np.array([np.cos(angle),np.sin(angle)])
+        unit_vector = np.array([np.cos(angle+np.pi/2),np.sin(angle+np.pi/2)])
+        inner_radius_vector = inner_radius * np.array([np.cos(angle),np.sin(angle)])
+        origin = inner_radius_vector - inner_module_width/2 * unit_vector
+        position = origin + unit_vector * (8.51*(hit['sector']-0.5)/4 + 1.475*(hit['sector']-0.5)/2*((hit['layer']+0.5)**2-hit['layer']-0.5)/20)
+        position += 22.46*((hit['layer']+0.5)**2-hit['layer']-0.5)/20 *unit_radius_vector
+        x2 = position[0]
+        y2= position[1]
+        z2 = hit['z']
+        x1,y1,z1 = closest_hit(each_hit_df.loc[each_hit_df['layer']<i],x2,y2,z2)
+        fig.add_scatter3d(x=[x1,x2],y=[y1,y2],z=[z1,z2],mode='lines',line={'color':"rgba(99,110,250,"+str(round(hit['opacity'],2))+")",'width':8})
+  previous_layer_hits = layer_hits
+  fig.update_layout(showlegend=False)
+  fig.show()

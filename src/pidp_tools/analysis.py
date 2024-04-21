@@ -44,26 +44,6 @@ def round_accuracies(num):
   else:
     return new_num
 
-def match_hypotheses(hypotheses, predictions, confidences = []):
-  hypotheses = list(hypotheses)
-  predictions = list(predictions)
-  if hypotheses[0] == 13:
-    return np.random.choice(predictions)
-  new_list = [int(predictions[i]) for i in range(len(predictions)) if int(predictions[i]) != 13 and predictions[i] == hypotheses[i]]
-  [new_list.append(int(predictions[i])) for i in range(len(predictions)) if int(predictions[i]) in [7,12] and int(hypotheses[i]) in [6,11]]
-  if len(new_list) == 0:
-      return 13
-  if len(confidences) < 1:
-    return np.random.choice(new_list)
-  else:
-    new_confidences = np.array([confidences[i] for i in range(len(predictions)) if predictions[i] != 13 and predictions[i] == hypotheses[i]])
-    [new_confidences.append(confidences[i]) for i in range(len(predictions)) if int(predictions[i]) in [7,12] and int(hypotheses[i]) in [6,11]]
-    return new_list[np.argmax(new_confidences)]
-
-def most_frequent(predictions):
-  pred_ar,counts = np.unique(list(predictions),return_counts=True)
-  return pred_ar[np.argmax(counts)]
-
 class ConfusionMatrix():
   def __init__(self, labels, predictions, target='Generated As',title="", purity=False, label_selection="necessary"):
     self.target = 'Generated As'
@@ -89,7 +69,6 @@ class ConfusionMatrix():
 
     # Initialize variables
     particle_list = ["Photon","KLong","Neutron","Proton","K+","Pi+","AntiMuon","Positron","AntiProton","K-","Pi-","Muon","Electron","No ID"]
-    particle_array = np.array(particle_list)
     dataset = df.copy().reset_index(drop=True)
     predictions = []
     identities = []
@@ -111,7 +90,6 @@ class ConfusionMatrix():
     predictions_full = predictions_full.apply(particle_list.index)
     dataset['Hypothesis'] = dataset['Hypothesis'].apply(particle_list.index)
     dataset['Generated As'] = dataset['Generated As'].apply(particle_list.index)
-    included_particles = dataset['Generated As'].unique()
 
     #Analyzes the predictions using the hypothesis scheme
 
@@ -131,7 +109,7 @@ class ConfusionMatrix():
     dataset['eventno'] = event_nos
     reduced_dataset = dataset.loc[dataset['is matched']]
     grouped = reduced_dataset.sample(frac=1)[['Hypothesis','eventno']].groupby('eventno')
-    predictions = grouped.head(1).set_index('eventno').sort_index().reindex(list(range(number_of_events)),fill_value=13)['Hypothesis']
+    predictions = grouped.head(1).set_index('eventno').sort_index().reindex(list(range(number_of_events)),fill_value=13)['Hypothesis'].to_list()
     identities = [dataset[target][starting_index] for starting_index, ending_index in index_list]
 
     confusion_matrix = cls(identities, predictions, target=target,title=title, purity=purity, label_selection=label_selection)
@@ -139,24 +117,13 @@ class ConfusionMatrix():
   
   @classmethod
   def from_model(cls, model, df, target="Generated As", title="", purity=False, match_hypothesis=False, label_selection="charge"):
+
     particle_list = ["Photon","KLong","Neutron","Proton","K+","Pi+","AntiMuon","Positron","AntiProton","K-","Pi-","Muon","Electron","No ID"]
-    particle_array = np.array(particle_list)
     dataset = df.copy().reset_index(drop=True)
     predictions = []
     identities = []
     data_to_test = dataset[[column for column in model.feature_names_in_]]
 
-    if match_hypothesis:
-      temp_predictions = model.predict_proba(data_to_test)
-      prediction_confidences = [max(probs) for probs in temp_predictions]
-      raw_predictions = np.argmax(temp_predictions, axis=1)
-    else:
-      raw_predictions = model.predict(data_to_test)
-
-    if isinstance(raw_predictions[0], str):
-      dataset['Prediction'] = [particle_list.index(i) for i in raw_predictions]
-    else:
-      dataset['Prediction'] = raw_predictions
     if isinstance(df['Hypothesis'][0],str):
       dataset['Hypothesis']=dataset['Hypothesis'].apply(particle_list.index)
     if isinstance(df['Generated As'][0],str):
@@ -165,7 +132,6 @@ class ConfusionMatrix():
     nRows = len(dataset.index)
     starting_index = 0
 
-    dataset['is matched'] = dataset['Hypothesis'] == dataset['Prediction']
     index_list = []
     event_nos = []
     i = 0
@@ -176,22 +142,35 @@ class ConfusionMatrix():
       i+= 1
       starting_index = ending_index
     number_of_events = i
-    dataset['eventno'] = event_nos
-    identities = [dataset[target][starting_index] for starting_index, ending_index in index_list]
+    dataset['eventNo'] = event_nos
 
     if match_hypothesis:
-      reduced_dataset = dataset.loc[dataset['is matched']]
-      grouped = reduced_dataset.sample(frac=1)[['Hypothesis','eventno']].groupby('eventno')
-      predictions = grouped.head(1).set_index('eventno').sort_index().reindex(list(range(number_of_events)),fill_value=13)['Hypothesis']
+      temp_predictions = model.predict_proba(data_to_test)
+      dataset['Confidence'] = [max(probs) for probs in temp_predictions]
+      dataset['Prediction'] = np.argmax(temp_predictions, axis=1)
+
+      identities_grouped = dataset[['Generated As','Prediction']].groupby('eventNo')
+      identities = identities_grouped['Generated As'].head(1).to_list()
+
+      matches_hypotheses_bool_list = (dataset['Prediction'] == dataset['Hypothesis']) | (dataset['Hypothesis'] == 13)
+      matching_hypotheses = dataset.loc[matches_hypotheses_bool_list]
+      grouped_df = matching_hypotheses[['Generated As','Prediction','Confidence','eventNo']].groupby('eventNo')
+      max_confidence_indices = grouped_df['Confidence'].idxmax()
+      predictions_temp = dataset['Prediction'].iloc[max_confidence_indices]
+      
+      predictions = predictions_temp.set_index('eventNo').sort_index().reindex(list(range(number_of_events)),fill_value=13).to_list
+      identities = grouped_df[target].head(1).to_list()
     else:
-      grouped = dataset[['Prediction', 'eventno']].groupby('eventno')
-      predictions = grouped.agg(lambda x: x.value_counts().index[0])['Prediction'].to_list()
+      dataset['Prediction'] = model.predict(data_to_test)
+      grouped_df = dataset[['Generated As','Prediction']].groupby('eventNo')
+      identities = grouped_df['Generated As'].head(1).to_list()
+      predictions = grouped_df['Prediction'].agg(lambda x: x.value_counts().index[0]).to_list()
 
     confusion_matrix = cls(identities, predictions, target=target,title=title, purity=purity, label_selection=label_selection)
     return confusion_matrix
 
   def calculate_matrix(self, labels, predictions):
-    self.confusion_matrix = np.zeros((13,14))
+    temp_confusion_matrix = np.zeros((13,14))
     particle_list = ["Photon","KLong","Neutron","Proton","K+","Pi+","AntiMuon","Positron","AntiProton","K-","Pi-","Muon","Electron","No ID"]
     particle_array = np.array(particle_list)
 
@@ -225,29 +204,28 @@ class ConfusionMatrix():
     self.nXticks = len(self.x_labels)
     self.nYticks = len(self.y_labels)
 
-    np.add.at(self.confusion_matrix,(labels,predictions),1)
-    if np.sum(self.confusion_matrix[:, 13]) > 0:
-      self.confusion_matrix = self.confusion_matrix[self.included_particles, :]
-      self.confusion_matrix = self.confusion_matrix[:,[*self.included_particles,13]]
+    np.add.at(temp_confusion_matrix,(labels,predictions),1)
+    if np.sum(temp_confusion_matrix[:, 13]) > 0:
+      temp_confusion_matrix = temp_confusion_matrix[self.included_particles, :]
+      temp_confusion_matrix = temp_confusion_matrix[:,[*self.included_particles,13]]
     else:
-      self.confusion_matrix = self.confusion_matrix[self.included_particles, :]
-      self.confusion_matrix = self.confusion_matrix[:,self.included_particles]
+      temp_confusion_matrix = temp_confusion_matrix[self.included_particles, :]
+      temp_confusion_matrix = temp_confusion_matrix[:,self.included_particles]
       self.x_labels = [i for i in self.x_labels if i != "No ID"]
       self.nXticks -= 1
 
-    warnings.filterwarnings("ignore", category=RuntimeWarning)
+    
+
+    if self.purity:
+      temp_confusion_matrix = np.transpose(temp_confusion_matrix)
+    
+    self.confusion_matrix = np.zeros_like(temp_confusion_matrix)
+
+    for i in range(len(temp_confusion_matrix)):
+      self.confusion_matrix[i]= temp_confusion_matrix[i]/sum(temp_confusion_matrix[i]) if sum(temp_confusion_matrix[i]) > 0 else np.zeros_like(temp_confusion_matrix[i])
 
     if self.purity:
       self.confusion_matrix = np.transpose(self.confusion_matrix)
-
-    for i in range(len(self.confusion_matrix)):
-      self.confusion_matrix[i]= self.confusion_matrix[i]/sum(self.confusion_matrix[i])
-
-    if self.purity:
-      self.confusion_matrix = np.transpose(self.confusion_matrix)
-
-    warnings.resetwarnings()
-    np.nan_to_num(self.confusion_matrix, copy=False)
 
   def display_matrix(self, title):
     self.fig, self.ax = plt.subplots()
@@ -386,21 +364,35 @@ def feature_importance(model, test_data_full, target='Generated As', match_hypot
     event_nos.extend([i for _ in range(starting_index, ending_index)])
     i+= 1
     starting_index = ending_index
+  number_of_events = i
 
   if match_hypothesis:
-    prediction_probs = model.predict_proba(new_test)
-    prediction_confidences = np.max(prediction_probs,axis=1)
-    raw_predictions = np.argmax(prediction_probs,axis=1)
+    temp_predictions = model.predict_proba(new_test)
+    new_test['Confidence'] = [max(probs) for probs in temp_predictions]
+    new_test['Prediction'] = np.argmax(temp_predictions, axis=1)
+
+    identities_grouped = new_test[['Generated As','Prediction']].groupby('eventNo')
+    identities = identities_grouped['Generated As'].head(1).to_list()
+
+    matches_hypotheses_bool_list = (new_test['Prediction'] == new_test['Hypothesis']) | (new_test['Hypothesis'] == 13)
+    matching_hypotheses = new_test.loc[matches_hypotheses_bool_list]
+    grouped_df = matching_hypotheses[['Generated As','Prediction','Confidence','eventNo']].groupby('eventNo')
+    max_confidence_indices = grouped_df['Confidence'].idxmax()
+    predictions_temp = new_test['Prediction'].iloc[max_confidence_indices]
+      
+    predictions = predictions_temp.set_index('eventNo').sort_index().reindex(list(range(number_of_events)),fill_value=13).to_list
+    identities = grouped_df[target].head(1).to_list()
   else:
-    raw_predictions = model.predict(new_test)
-
-
+    new_test['Prediction'] = model.predict(new_test)
+    new_test['eventNo'] = event_nos
+    grouped_df = new_test[['Prediction','eventNo','Generated As']].groupby('eventNo')
+    predictions = grouped_df['Prediction'].agg(lambda x: x.value_counts().index[0]).to_list()
+    identities = grouped_df['Generated As'].head(1).to_list()
+    
   identities = np.array(identities, dtype= int)
   predictions = np.array(predictions, dtype= int)
   starting_accuracy = sklearn.metrics.accuracy_score(identities[0:1300],predictions[0:1300])
-  for i in range(n_features_to_shuffle):
-    accuracies = [sklearn.metrics.accuracy_score(identities[1300*(i*n_repetitions+j+1):1300*(i*n_repetitions+j+2)], predictions[1300*(i*n_repetitions+j+1):1300*(i*n_repetitions+j+2)]) for j in range(n_repetitions)]
-    importances.append(starting_accuracy-(sum(accuracies)/n_repetitions))
+  importances = [starting_accuracy-sklearn.metrics.accuracy_score(identities[1300*(i*n_repetitions+1):1300*((i+1)*n_repetitions+1)], predictions[1300*(i*n_repetitions+1):1300*((i+1)*n_repetitions+1)]) for i in range(n_features_to_shuffle)]
   important_features = [model.feature_names_in_[i] for i in range(n_features_to_shuffle) if importances[i] > 0.005]
   important_importances = [i for i in importances if i > 0.005]
   plt.bar(important_features,important_importances)

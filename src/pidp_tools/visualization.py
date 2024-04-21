@@ -306,7 +306,7 @@ def view_shower_2D(df, eventNum):
     for hit in prev_layer.iloc:
       distance = ((x-hit['x'])**2 + (y-hit['y'])**2)**0.5
       if distance < prev_distance:
-        solution = (hit['x'],hit['y'],hit['opacity'])
+        solution = (hit['x'],hit['y'])
         prev_distance = distance
     if prev_distance > ((x)**2 + (y)**2)**0.5:
       return (x,y)

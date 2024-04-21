@@ -4,13 +4,13 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pidp_tools"
-version = "0.3.11"
+version = "0.3.12"
 authors = [
     { name="Richard Dube", email="richardddube@gmail.com"},
 ]
 description = "A collection of visualization and analysis tools for particle identification"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",

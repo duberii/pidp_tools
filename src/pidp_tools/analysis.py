@@ -149,20 +149,20 @@ class ConfusionMatrix():
       dataset['Confidence'] = [max(probs) for probs in temp_predictions]
       dataset['Prediction'] = np.argmax(temp_predictions, axis=1)
 
-      identities_grouped = dataset[['Generated As','Prediction']].groupby('eventNo')
+      identities_grouped = dataset[['Generated As','Prediction','eventNo']].groupby('eventNo')
       identities = identities_grouped['Generated As'].head(1).to_list()
 
       matches_hypotheses_bool_list = (dataset['Prediction'] == dataset['Hypothesis']) | (dataset['Hypothesis'] == 13)
       matching_hypotheses = dataset.loc[matches_hypotheses_bool_list]
       grouped_df = matching_hypotheses[['Generated As','Prediction','Confidence','eventNo']].groupby('eventNo')
       max_confidence_indices = grouped_df['Confidence'].idxmax()
-      predictions_temp = dataset['Prediction'].iloc[max_confidence_indices]
+      predictions_temp = dataset['Prediction','eventNo'].iloc[max_confidence_indices]
       
       predictions = predictions_temp.set_index('eventNo').sort_index().reindex(list(range(number_of_events)),fill_value=13).to_list
       identities = grouped_df[target].head(1).to_list()
     else:
       dataset['Prediction'] = model.predict(data_to_test)
-      grouped_df = dataset[['Generated As','Prediction']].groupby('eventNo')
+      grouped_df = dataset[['Generated As','Prediction','eventNo']].groupby('eventNo')
       identities = grouped_df['Generated As'].head(1).to_list()
       predictions = grouped_df['Prediction'].agg(lambda x: x.value_counts().index[0]).to_list()
 
@@ -371,7 +371,7 @@ def feature_importance(model, test_data_full, target='Generated As', match_hypot
     new_test['Confidence'] = [max(probs) for probs in temp_predictions]
     new_test['Prediction'] = np.argmax(temp_predictions, axis=1)
 
-    identities_grouped = new_test[['Generated As','Prediction']].groupby('eventNo')
+    identities_grouped = new_test[['Generated As','Prediction','eventNo']].groupby('eventNo')
     identities = identities_grouped['Generated As'].head(1).to_list()
 
     matches_hypotheses_bool_list = (new_test['Prediction'] == new_test['Hypothesis']) | (new_test['Hypothesis'] == 13)

@@ -10,24 +10,27 @@ import warnings
 def install_ROOT():
   import subprocess
   try:
-    subprocess.run(["wget","-q","https://github.com/MohamedElashri/ROOT/releases/download/ubuntu/root_v6.28.04_Ubuntu_20.04.zip"])
-    subprocess.run(["unzip", "-o", "-qq", "/content/root_v6.28.04_Ubuntu_20.04.zip"])
-    subprocess.run(["apt-get", "-qq", "install", "git", "dpkg-dev", "cmake", "g++", "gcc", "binutils", "libx11-dev", "libxpm-dev", "libxft-dev", "libxext-dev", "tar", "gfortran", "subversion", "&>", "/dev/null", "2>&1"])
-    subprocess.run(["rm", "-f", "root_v6.28.04_Ubuntu_20.04.zip"])
-    subprocess.run(["wget", "-q", "http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb"])
-    subprocess.run(["sudo", "dpkg", "-i", "libssl1.1_1.1.1f-1ubuntu2_amd64.deb"])
-    subprocess.run(["rm", "-f", "libssl1.1_1.1.1f-1ubuntu2_amd64.deb"])
+    import ROOT
   except:
-    raise OSError("Unable to install ROOT. This install was designed specifically for use in google colab. Installing on personal computers is discouraged due to the file size.")
-  import sys
-  sys.path.append("/content/root_build/")
-  sys.path.append("/content/root_build/bin/")
-  sys.path.append("/content/root_build/include/")
-  sys.path.append("/content/root_build/lib/")
-  import ctypes
-  ctypes.cdll.LoadLibrary('/content/root_build/lib//libCore.so')
-  ctypes.cdll.LoadLibrary('/content/root_build/lib//libThread.so')
-  ctypes.cdll.LoadLibrary('/content/root_build/lib//libTreePlayer.so')
+    try:
+      subprocess.run(["wget","-q","https://github.com/MohamedElashri/ROOT/releases/download/ubuntu/root_v6.28.04_Ubuntu_20.04.zip"])
+      subprocess.run(["unzip", "-o", "-qq", "/content/root_v6.28.04_Ubuntu_20.04.zip"])
+      subprocess.run(["apt-get", "-qq", "install", "git", "dpkg-dev", "cmake", "g++", "gcc", "binutils", "libx11-dev", "libxpm-dev", "libxft-dev", "libxext-dev", "tar", "gfortran", "subversion", "&>", "/dev/null", "2>&1"])
+      subprocess.run(["rm", "-f", "root_v6.28.04_Ubuntu_20.04.zip"])
+      subprocess.run(["wget", "-q", "http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb"])
+      subprocess.run(["sudo", "dpkg", "-i", "libssl1.1_1.1.1f-1ubuntu2_amd64.deb"])
+      subprocess.run(["rm", "-f", "libssl1.1_1.1.1f-1ubuntu2_amd64.deb"])
+      import sys
+      sys.path.append("/content/root_build/")
+      sys.path.append("/content/root_build/bin/")
+      sys.path.append("/content/root_build/include/")
+      sys.path.append("/content/root_build/lib/")
+      import ctypes
+      ctypes.cdll.LoadLibrary('/content/root_build/lib//libCore.so')
+      ctypes.cdll.LoadLibrary('/content/root_build/lib//libThread.so')
+      ctypes.cdll.LoadLibrary('/content/root_build/lib//libTreePlayer.so')
+    except:
+      raise OSError("Unable to install ROOT. This install was designed specifically for use in google colab. Installing on personal computers is discouraged due to the file size.")
 
 def get_charge(ptype):
   if ptype in ["Electron", "Muon", "Pi-", "K-",'AntiProton',3,4,5,6,7]:

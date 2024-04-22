@@ -1,11 +1,14 @@
-import plotly.graph_objects as go
+import plotly.graph_objects as go 
+import plotly.express as pxp
 import numpy as np
 import pandas as pd
 import xml.etree.ElementTree as ET
-from ipywidgets import interact, interactive, fixed, interact_manual, widgets, HBox, VBox, Layout
+from ipywidgets import interactive, HBox, VBox, Layout
 import ipywidgets as widgets
 import subprocess
 from pidp_tools.analysis import get_charge
+import math
+from PIL import Image
 
 def plot_vector(x_val,y_val,z_val):
   x = [0, x_val]
@@ -27,11 +30,10 @@ def degrees_to_radians(degrees):
 
 class wirePositions():
   def __init__(self):
-    subprocess.run("wget -q -O CentralDC_HDDS.xml https://github.com/JeffersonLab/hdds/raw/master/CentralDC_HDDS.xml")
+    subprocess.run(["wget", "-q", "-O", "CentralDC_HDDS.xml", "https://github.com/JeffersonLab/hdds/raw/master/CentralDC_HDDS.xml"])
     tree =ET.parse("CentralDC_HDDS.xml")
     root = tree.getroot()
     n_wires_per_ring = [0]
-    wire_to_ring = [0]
     positionsMatrix = []
     ar = []
     for tag in [j for j in root.findall("composition") if j.get("name")=="CDClayers"][0]:
@@ -75,15 +77,14 @@ class wirePositions():
         new_y = np.array([self.positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][0][1]*(1-s) + s* self.positionsMatrix[int(rings[i]-1)][int(wires[i]-1)][1][1] for i in range(len(wires))])
       return new_x, new_y
 
-class CDC_plot():
-  def __init__(self, title, wire_positions, event=0, showTrack = False, showHits = False, showlegend=False):
+class track_fitting():
+  def __init__(self, title="Hits in the GlueX CDC", wire_positions=wirePositions(), event=None, showTrack = False, showlegend=False):
     self.wirePositions = wire_positions
     self.figure = go.FigureWidget()
     self.figure.update_layout(xaxis_range=[-60,60], yaxis_range=[-60,60],width=500,height=500,showlegend=showlegend,title=title,xaxis_title="X", yaxis_title="Y")
     self.figure.add_shape(type="circle", xref="x", yref="y", x0=-10.5, y0=-10.5, x1=10.5, y1=10.5, line_color="black")
     self.figure.add_shape(type="circle", xref="x", yref="y", x0=-55, y0=-55, x1=55, y1=55, line_color="black")
-    if not isinstance(event, int):
-      showHits = True
+    if event is not None:
       self.charge = get_charge(event["particle"])
       self.px = event['px']
       self.py = event['py']
@@ -152,10 +153,8 @@ class CDC_plot():
     return rmse
   def calc_z0(self, quiet=False, return_rmse=False):
     rmses = {}
-    center_x = self.charge*330*self.py/1.7
-    center_y = -330*self.charge*self.px/1.7
     for z in np.linspace(0,150,151):
-      new_x, new_y = ring_wire_to_x_y(self.ring, self.straw,z/175)
+      new_x, new_y = self.wirePositions.position(self.ring, self.straw,z/175)
       rmses[z] = self.calculate_rmse(new_x,new_y)
     if quiet and return_rmse:
       return min(rmses, key=rmses.get), min(list(rmses.values()))
@@ -177,15 +176,18 @@ class CDC_plot():
       print("The y component of momentum is " + str(round(self.py, 2)))
     if pz or all([every,but != "pz"]):
       print("The z component of momentum is " + str(round(self.pz, 2)))
+  def __repr__():
+    return ""
 
-class wire_plot():
-  def __init__(self,rings,title, showlegend=True):
+class CDC_plot_2D():
+  def __init__(self,rings,title="Wire Positions in the GlueX CDC", wire_positions=wirePositions(),showlegend=True):
+    self.wirePositions = wire_positions
     self.figure = go.FigureWidget()
     self.figure.update_layout(xaxis_range=[-60,60], yaxis_range=[-60,60],width=500,height=500,showlegend=showlegend,title=title,xaxis_title="X", yaxis_title="Y")
     self.figure.add_shape(type="circle", xref="x", yref="y", x0=-10.5, y0=-10.5, x1=10.5, y1=10.5, line_color="black")
     self.figure.add_shape(type="circle", xref="x", yref="y", x0=-55, y0=-55, x1=55, y1=55, line_color="black")
     for ring in rings:
-      self.figure.add_scatter(mode='markers',name="Ring " + str(ring),marker={"size":3},hoverinfo='text',text = ['Ring: ' + str(ring) + "\n Wire: " + str(k) for k in range(len(positionsMatrix[int(ring)-1]))])
+      self.figure.add_scatter(mode='markers',name="Ring " + str(ring),marker={"size":3},hoverinfo='text',text = ['Ring: ' + str(ring) + "\n Wire: " + str(k) for k in range(len(self.wirePositions.positionsMatrix[int(ring)-1]))])
     self.data = []
   def show(self):
     self.figure.show()
@@ -202,9 +204,46 @@ class wire_plot():
     s= z/175
     with self.figure.batch_update():
       for i in range(len(rings)):
-        self.figure.data[i]['x']=[(1-s)*wire[0][0]+ s*wire[1][0] for wire in positionsMatrix[int(rings[i])-1]]
-        self.figure.data[i]['y']=[(1-s)*wire[0][1]+ s*wire[1][1] for wire in positionsMatrix[int(rings[i])-1]]
+        self.figure.data[i]['x']=[(1-s)*wire[0][0]+ s*wire[1][0] for wire in self.wirePositions.positionsMatrix[int(rings[i])-1]]
+        self.figure.data[i]['y']=[(1-s)*wire[0][1]+ s*wire[1][1] for wire in self.wirePositions.positionsMatrix[int(rings[i])-1]]
     self.show()
+  def __repr__(self):
+    return ""
+
+class CDC_plot_3D():
+  def __init__(self, rings, wire_positions = wirePositions()):
+    self.wirePositions = wire_positions
+    if len(rings) > 3:
+      raise ValueError("Too many rings. Provide at most 3 rings.")
+    xs = []
+    ys = []
+    zs = []
+    ring_wires = []
+    rings_to_plot = []
+    for i in self.wirePositions.wire_positions_df.iloc:
+      if i['ring'] in rings:
+        xs.append(i['pos'][0][0]);
+        xs.append(i['pos'][1][0]);
+        ys.append(i['pos'][0][1]);
+        ys.append(i['pos'][1][1]);
+        zs.append(i['pos'][0][2]);
+        zs.append(i['pos'][1][2]);
+        ring_wires.append("Ring: "+ str(i['ring']) + " Wire: " + str(i['straw']))
+        ring_wires.append("Ring: "+ str(i['ring']) + " Wire: " + str(i['straw']))
+        rings_to_plot.append(i['ring'])
+        rings_to_plot.append(i['ring'])
+    data_to_plot = pd.DataFrame()
+    data_to_plot['x'] = xs
+    data_to_plot['y'] = ys
+    data_to_plot['z'] = zs
+    data_to_plot['Ring and Wire']=ring_wires
+    data_to_plot['ring']=rings_to_plot
+    fig = pxp.line_3d(data_frame=data_to_plot,x='x',y='z',z='y',line_group='Ring and Wire',color='ring')
+    fig.update_traces(line=dict(width=5))
+    fig.update_layout(title="Rings of the GlueX Central Drift Chamber",legend_title="Ring Number",scene={'aspectmode':'cube','xaxis':{'range':[-60,60],"title":"X"},'yaxis':{'range':[0,175],"title":"Z"},'zaxis':{'range':[-60,60],'title':'Y'}})
+    fig.show()
+  def __repr__(self):
+    return ""
 
 class interactive_image():
   def __init__(self,image_path="",x_max = 1, y_max=2*10**-5):

@@ -55,7 +55,6 @@ class ConfusionMatrix():
     self.label_selection = label_selection
 
     particle_list = ["Photon","KLong","Neutron","Proton","K+","Pi+","AntiMuon","Positron","AntiProton","K-","Pi-","Muon","Electron","No ID"]
-    particle_array = np.array(particle_list)
 
     if isinstance(labels[0],str):
       labels = [particle_list.index(label) for label in labels]

@@ -84,12 +84,13 @@ class ConfusionMatrix():
 
     try:
       predictions_full = estimator(dataset)
+      if len(predictions_full) != len(dataset.index):
+        predictions_full = dataset.apply(estimator,axis=1)
     except:
       predictions_full = dataset.apply(estimator,axis=1)
 
     #Converts predictions, as well as the hypothesis and generated as columns, back to integers.
-
-    predictions_full = predictions_full.apply(particle_list.index)
+    dataset['Prediction'] = predictions_full.apply(particle_list.index).to_list()
     dataset['Hypothesis'] = dataset['Hypothesis'].apply(particle_list.index)
     dataset['Generated As'] = dataset['Generated As'].apply(particle_list.index)
 
@@ -97,11 +98,11 @@ class ConfusionMatrix():
 
     nRows = len(dataset.index)
     starting_index = 0
-    dataset['is matched'] = dataset['Hypothesis'] == predictions_full
+    dataset['is matched'] = (dataset['Hypothesis'] == dataset['Prediction']) | (dataset['Hypothesis'] == 13)
     index_list = []
     event_nos = []
     i = 0
-    while starting_index < nRows - 1 :
+    while starting_index <= nRows - 1 :
       ending_index = starting_index + dataset['Number of Hypotheses'][starting_index]
       index_list.append((starting_index, ending_index))
       event_nos.extend([i for _ in range(starting_index, ending_index)])
@@ -110,9 +111,9 @@ class ConfusionMatrix():
     number_of_events = i
     dataset['eventno'] = event_nos
     reduced_dataset = dataset.loc[dataset['is matched']]
-    grouped = reduced_dataset.sample(frac=1)[['Hypothesis','eventno']].groupby('eventno')
-    predictions = grouped.head(1).set_index('eventno').sort_index().reindex(list(range(number_of_events)),fill_value=13)['Hypothesis'].to_list()
-    identities = [dataset[target][starting_index] for starting_index, ending_index in index_list]
+    grouped = reduced_dataset.sample(frac=1)[['Prediction','eventno']].groupby('eventno')
+    predictions = grouped.head(1).set_index('eventno').sort_index().reindex(list(range(number_of_events)),fill_value=13)['Prediction'].to_list()
+    identities = [int(dataset[target][starting_index]) for starting_index, ending_index in index_list]
 
     confusion_matrix = cls(identities, predictions, target=target,title=title, purity=purity, label_selection=label_selection)
     return confusion_matrix
@@ -137,7 +138,7 @@ class ConfusionMatrix():
     index_list = []
     event_nos = []
     i = 0
-    while starting_index < nRows - 1 :
+    while starting_index <= nRows - 1 :
       ending_index = starting_index + dataset['Number of Hypotheses'][starting_index]
       index_list.append((starting_index, ending_index))
       event_nos.extend([i for _ in range(starting_index, ending_index)])
@@ -272,7 +273,6 @@ def split_df(input_df, training_fraction=0.9):
   starting_index = 0
   training_list = []
   test_list = []
-  index_list = []
   counter = 0
   while starting_index <= nRows - 1 :
     counter += 1
@@ -359,7 +359,7 @@ def feature_importance(model, test_data_full, target='Generated As', match_hypot
   event_nos = []
   i = 0
   nRows = len(new_test.index)
-  while starting_index < nRows - 1 :
+  while starting_index <= nRows - 1 :
     ending_index = starting_index + new_test['Number of Hypotheses'][starting_index]
     index_list.append((starting_index, ending_index))
     event_nos.extend([i for _ in range(starting_index, ending_index)])

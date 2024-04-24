@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pidp_tools.analysis &mdash; pidp_tools 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/documentation_options.js?v=8d563738"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pidp_tools
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pidp_tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pidp_tools.analysis</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pidp_tools.analysis</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">pidp_tools.formatting</span> <span class="kn">import</span> <span class="n">format_labels</span>
+<span class="kn">import</span> <span class="nn">sklearn.metrics</span>
+<span class="kn">import</span> <span class="nn">joblib</span>
+<span class="kn">import</span> <span class="nn">tqdm</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<div class="viewcode-block" id="install_ROOT">
+<a class="viewcode-back" href="../../index.html#pidp_tools.analysis.install_ROOT">[docs]</a>
+<span class="k">def</span> <span class="nf">install_ROOT</span><span class="p">():</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Installs ROOT.</span>
+
+<span class="sd">  Examples</span>
+<span class="sd">  --------</span>
+<span class="sd">  &gt;&gt;&gt; from pidp_tools import \*</span>
+<span class="sd">  &gt;&gt;&gt; install_ROOT()</span>
+<span class="sd">  &gt;&gt;&gt; from ROOT import \*</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="kn">import</span> <span class="nn">subprocess</span>
+  <span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">ROOT</span>
+  <span class="k">except</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;wget&quot;</span><span class="p">,</span><span class="s2">&quot;-q&quot;</span><span class="p">,</span><span class="s2">&quot;https://github.com/MohamedElashri/ROOT/releases/download/ubuntu/root_v6.28.04_Ubuntu_20.04.zip&quot;</span><span class="p">])</span>
+      <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;unzip&quot;</span><span class="p">,</span> <span class="s2">&quot;-o&quot;</span><span class="p">,</span> <span class="s2">&quot;-qq&quot;</span><span class="p">,</span> <span class="s2">&quot;/content/root_v6.28.04_Ubuntu_20.04.zip&quot;</span><span class="p">])</span>
+      <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;apt-get&quot;</span><span class="p">,</span> <span class="s2">&quot;-qq&quot;</span><span class="p">,</span> <span class="s2">&quot;install&quot;</span><span class="p">,</span> <span class="s2">&quot;git&quot;</span><span class="p">,</span> <span class="s2">&quot;dpkg-dev&quot;</span><span class="p">,</span> <span class="s2">&quot;cmake&quot;</span><span class="p">,</span> <span class="s2">&quot;g++&quot;</span><span class="p">,</span> <span class="s2">&quot;gcc&quot;</span><span class="p">,</span> <span class="s2">&quot;binutils&quot;</span><span class="p">,</span> <span class="s2">&quot;libx11-dev&quot;</span><span class="p">,</span> <span class="s2">&quot;libxpm-dev&quot;</span><span class="p">,</span> <span class="s2">&quot;libxft-dev&quot;</span><span class="p">,</span> <span class="s2">&quot;libxext-dev&quot;</span><span class="p">,</span> <span class="s2">&quot;tar&quot;</span><span class="p">,</span> <span class="s2">&quot;gfortran&quot;</span><span class="p">,</span> <span class="s2">&quot;subversion&quot;</span><span class="p">,</span> <span class="s2">&quot;&amp;&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;/dev/null&quot;</span><span class="p">,</span> <span class="s2">&quot;2&gt;&amp;1&quot;</span><span class="p">])</span>
+      <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;rm&quot;</span><span class="p">,</span> <span class="s2">&quot;-f&quot;</span><span class="p">,</span> <span class="s2">&quot;root_v6.28.04_Ubuntu_20.04.zip&quot;</span><span class="p">])</span>
+      <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;wget&quot;</span><span class="p">,</span> <span class="s2">&quot;-q&quot;</span><span class="p">,</span> <span class="s2">&quot;http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb&quot;</span><span class="p">])</span>
+      <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;sudo&quot;</span><span class="p">,</span> <span class="s2">&quot;dpkg&quot;</span><span class="p">,</span> <span class="s2">&quot;-i&quot;</span><span class="p">,</span> <span class="s2">&quot;libssl1.1_1.1.1f-1ubuntu2_amd64.deb&quot;</span><span class="p">])</span>
+      <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;rm&quot;</span><span class="p">,</span> <span class="s2">&quot;-f&quot;</span><span class="p">,</span> <span class="s2">&quot;libssl1.1_1.1.1f-1ubuntu2_amd64.deb&quot;</span><span class="p">])</span>
+      <span class="kn">import</span> <span class="nn">sys</span>
+      <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;/content/root_build/&quot;</span><span class="p">)</span>
+      <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;/content/root_build/bin/&quot;</span><span class="p">)</span>
+      <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;/content/root_build/include/&quot;</span><span class="p">)</span>
+      <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;/content/root_build/lib/&quot;</span><span class="p">)</span>
+      <span class="kn">import</span> <span class="nn">ctypes</span>
+      <span class="n">ctypes</span><span class="o">.</span><span class="n">cdll</span><span class="o">.</span><span class="n">LoadLibrary</span><span class="p">(</span><span class="s1">&#39;/content/root_build/lib//libCore.so&#39;</span><span class="p">)</span>
+      <span class="n">ctypes</span><span class="o">.</span><span class="n">cdll</span><span class="o">.</span><span class="n">LoadLibrary</span><span class="p">(</span><span class="s1">&#39;/content/root_build/lib//libThread.so&#39;</span><span class="p">)</span>
+      <span class="n">ctypes</span><span class="o">.</span><span class="n">cdll</span><span class="o">.</span><span class="n">LoadLibrary</span><span class="p">(</span><span class="s1">&#39;/content/root_build/lib//libTreePlayer.so&#39;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="s2">&quot;Unable to install ROOT. This install was designed specifically for use in google colab. Installing on personal computers is discouraged due to the file size.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_charge">
+<a class="viewcode-back" href="../../index.html#pidp_tools.analysis.get_charge">[docs]</a>
+<span class="k">def</span> <span class="nf">get_charge</span><span class="p">(</span><span class="n">ptype</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Returns the charge of the provided particle</span>
+
+<span class="sd">  Parameters</span>
+<span class="sd">  ----------</span>
+<span class="sd">  ptype \: str or int</span>
+<span class="sd">      The particle to find the charge of. If int, the particle is assumed to be the element of the following list with the corresponding index\: [&quot;Photon&quot;, &quot;KLong&quot;, &quot;Neutron&quot;, &quot;Proton&quot;, &quot;K+&quot;, &quot;Pi+&quot;, &quot;AntiMuon&quot;, &quot;Positron&quot;, &quot;AntiProton&quot;, &quot;K-&quot;, &quot;Pi-&quot;, &quot;Muon&quot;, &quot;Electron&quot;, &quot;No ID&quot;].</span>
+<span class="sd">      </span>
+<span class="sd">  Examples</span>
+<span class="sd">  --------</span>
+<span class="sd">  &gt;&gt;&gt; get_charge(&quot;AntiProton&quot;)</span>
+<span class="sd">  -1</span>
+<span class="sd">  &gt;&gt;&gt; get_charge(3)</span>
+<span class="sd">  1</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">if</span> <span class="n">ptype</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Electron&quot;</span><span class="p">,</span> <span class="s2">&quot;Muon&quot;</span><span class="p">,</span> <span class="s2">&quot;Pi-&quot;</span><span class="p">,</span> <span class="s2">&quot;K-&quot;</span><span class="p">,</span><span class="s1">&#39;AntiProton&#39;</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+  <span class="k">elif</span> <span class="n">ptype</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Positron&quot;</span><span class="p">,</span><span class="s2">&quot;AntiMuon&quot;</span><span class="p">,</span> <span class="s2">&quot;Pi+&quot;</span><span class="p">,</span> <span class="s2">&quot;K+&quot;</span><span class="p">,</span> <span class="s2">&quot;Proton&quot;</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">12</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="mi">1</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">return</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="round_accuracies">
+<a class="viewcode-back" href="../../index.html#pidp_tools.analysis.round_accuracies">[docs]</a>
+<span class="k">def</span> <span class="nf">round_accuracies</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Rounds a number to 2 decimal places. If the rounded number is 0.00 or 1.00, an int is returned.</span>
+
+<span class="sd">  Parameters</span>
+<span class="sd">  ----------</span>
+<span class="sd">  num \: float or int</span>
+<span class="sd">      The number to round.</span>
+<span class="sd">      </span>
+<span class="sd">  Examples</span>
+<span class="sd">  --------</span>
+<span class="sd">  &gt;&gt;&gt; round_accuracies(0.3333333)</span>
+<span class="sd">  0.33</span>
+<span class="sd">  &gt;&gt;&gt; round_accuracies(0.001)</span>
+<span class="sd">  0</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">new_num</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">num</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">new_num</span> <span class="o">==</span> <span class="mf">0.00</span><span class="p">:</span>
+    <span class="k">return</span> <span class="mi">0</span>
+  <span class="k">elif</span> <span class="n">new_num</span> <span class="o">==</span> <span class="mf">1.00</span><span class="p">:</span>
+    <span class="k">return</span> <span class="mi">1</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">new_num</span></div>
+
+
+<div class="viewcode-block" id="ConfusionMatrix">
+<a class="viewcode-back" href="../../index.html#pidp_tools.analysis.ConfusionMatrix">[docs]</a>
+<span class="k">class</span> <span class="nc">ConfusionMatrix</span><span class="p">():</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Creates a confusion matrix based on a collection of labels and predictions. </span>
+
+<span class="sd">  Parameters</span>
+<span class="sd">  ----------</span>
+<span class="sd">  labels \: list</span>
+<span class="sd">      A list of strings or integers that represent the true particle type for a series of events.</span>
+<span class="sd">  predictions \: list</span>
+<span class="sd">      A list of strings or integers that represent the predicted particle type for a series of events.</span>
+<span class="sd">  title \: str, default &quot;&quot;</span>
+<span class="sd">      The title of the confusion matrix.</span>
+<span class="sd">  purity \: bool, default False</span>
+<span class="sd">      Normalize confusion matrix by columns instead of rows. If True, the sum of column values will be normalized to 1.</span>
+<span class="sd">  label_selection \: {&quot;all&quot;, &quot;charge&quot;, &quot;necessary&quot;}, default &quot;necessary&quot;</span>
+<span class="sd">      The way to determine which columns and rows to include in the confusion matrix:</span>
+
+<span class="sd">      - &quot;all&quot; \: Includes all particle rows and columns, even if they are entirely empty.</span>
+<span class="sd">      - &quot;charge&quot; \: Includes all of the particle types included in the labels and predictions, plus all particles of the same charge category (charged, neutral) as those included in the labels and predictions.</span>
+<span class="sd">      - &quot;necessary&quot; \: Includes only those particles that are included in the labels or predictions.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">purity</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">label_selection</span> <span class="o">=</span> <span class="s2">&quot;necessary&quot;</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="o">=</span> <span class="n">title</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">purity</span> <span class="o">=</span> <span class="n">purity</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">label_selection</span> <span class="o">=</span> <span class="n">label_selection</span>
+
+    <span class="n">particle_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Photon&quot;</span><span class="p">,</span><span class="s2">&quot;KLong&quot;</span><span class="p">,</span><span class="s2">&quot;Neutron&quot;</span><span class="p">,</span><span class="s2">&quot;Proton&quot;</span><span class="p">,</span><span class="s2">&quot;K+&quot;</span><span class="p">,</span><span class="s2">&quot;Pi+&quot;</span><span class="p">,</span><span class="s2">&quot;AntiMuon&quot;</span><span class="p">,</span><span class="s2">&quot;Positron&quot;</span><span class="p">,</span><span class="s2">&quot;AntiProton&quot;</span><span class="p">,</span><span class="s2">&quot;K-&quot;</span><span class="p">,</span><span class="s2">&quot;Pi-&quot;</span><span class="p">,</span><span class="s2">&quot;Muon&quot;</span><span class="p">,</span><span class="s2">&quot;Electron&quot;</span><span class="p">,</span><span class="s2">&quot;No ID&quot;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="nb">str</span><span class="p">):</span>
+      <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">particle_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">label</span><span class="p">)</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">predictions</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="nb">str</span><span class="p">):</span>
+      <span class="n">predictions</span> <span class="o">=</span> <span class="p">[</span><span class="n">particle_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">prediction</span><span class="p">)</span> <span class="k">for</span> <span class="n">prediction</span> <span class="ow">in</span> <span class="n">predictions</span><span class="p">]</span>
+
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">]</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">predictions</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">predictions</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Labels and predictions must have same length. Labels has length &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot; and predictions has length &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">predictions</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span>
+    
+    <span class="bp">self</span><span class="o">.</span><span class="n">calculate_matrix</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">display_matrix</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+  
+<div class="viewcode-block" id="ConfusionMatrix.from_estimator">
+<a class="viewcode-back" href="../../index.html#pidp_tools.analysis.ConfusionMatrix.from_estimator">[docs]</a>
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">from_estimator</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">estimator</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s1">&#39;Generated As&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">purity</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">label_selection</span><span class="o">=</span><span class="s2">&quot;necessary&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a confusion matrix based on the predictions made by the provided estimator.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    estimator \: function or method</span>
+<span class="sd">        The estimator to be used to identify particles. Estimators can take either rows of a dataframe and return a string (to be compatible with the .apply method of the dataframe object), or can take in an entire dataframe and return a series of strings.</span>
+<span class="sd">    df \: :external:class:`pandas.DataFrame`</span>
+<span class="sd">        The dataframe whose rows represent particles that can be identified by the estimator. Supplied dataframes should have a &quot;Hypothesis&quot; column, which contains either a str or int, and a &quot;Number of Hypotheses&quot; column, which contains an int.</span>
+<span class="sd">    target \: str, default &quot;Generated As&quot;</span>
+<span class="sd">        The target of the estimator. The supplied dataframe must have a column with this label.</span>
+<span class="sd">    title \: str, default &quot;&quot;</span>
+<span class="sd">        The title of the confusion matrix.</span>
+<span class="sd">    purity \: bool, default False</span>
+<span class="sd">        Normalize confusion matrix by columns instead of rows. If True, the sum of column values will be normalized to 1.</span>
+<span class="sd">    label_selection \: {&quot;all&quot;, &quot;charge&quot;, &quot;necessary&quot;}, default &quot;necessary&quot;</span>
+<span class="sd">        The way to determine which columns and rows to include in the confusion matrix:</span>
+
+<span class="sd">        - &quot;all&quot; \: Includes all particle rows and columns, even if they are entirely empty.</span>
+<span class="sd">        - &quot;charge&quot; \: Includes all of the particle types included in the labels and predictions, plus all particles of the same charge category (charged, neutral) as those included in the labels and predictions.</span>
+<span class="sd">        - &quot;necessary&quot; \: Includes only those particles that are included in the labels or predictions.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :class:`ConfusionMatrix`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Initialize variables</span>
+    <span class="n">particle_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Photon&quot;</span><span class="p">,</span><span class="s2">&quot;KLong&quot;</span><span class="p">,</span><span class="s2">&quot;Neutron&quot;</span><span class="p">,</span><span class="s2">&quot;Proton&quot;</span><span class="p">,</span><span class="s2">&quot;K+&quot;</span><span class="p">,</span><span class="s2">&quot;Pi+&quot;</span><span class="p">,</span><span class="s2">&quot;AntiMuon&quot;</span><span class="p">,</span><span class="s2">&quot;Positron&quot;</span><span class="p">,</span><span class="s2">&quot;AntiProton&quot;</span><span class="p">,</span><span class="s2">&quot;K-&quot;</span><span class="p">,</span><span class="s2">&quot;Pi-&quot;</span><span class="p">,</span><span class="s2">&quot;Muon&quot;</span><span class="p">,</span><span class="s2">&quot;Electron&quot;</span><span class="p">,</span><span class="s2">&quot;No ID&quot;</span><span class="p">]</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">identities</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1">#Ensure hypothesis and generated as columns are strings for use in PID functions</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Hypothesis&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Hypothesis&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="nb">int</span><span class="p">):</span>
+      <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Hypothesis&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Hypothesis&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">particle_list</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Generated As&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Generated As&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="nb">int</span><span class="p">):</span>
+      <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Generated As&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Generated As&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">particle_list</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
+
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">predictions_full</span> <span class="o">=</span> <span class="n">estimator</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+      <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">predictions_full</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">index</span><span class="p">):</span>
+        <span class="n">predictions_full</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">estimator</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+      <span class="n">predictions_full</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">estimator</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1">#Converts predictions, as well as the hypothesis and generated as columns, back to integers.</span>
+    <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Prediction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">predictions_full</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">particle_list</span><span class="o">.</span><span class="n">index</span><span class="p">)</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+    <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Hypothesis&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Hypothesis&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">particle_list</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Generated As&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Generated As&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">particle_list</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+    <span class="c1">#Analyzes the predictions using the hypothesis scheme</span>
+
+    <span class="n">nRows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="n">starting_index</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;is matched&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Hypothesis&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Prediction&#39;</span><span class="p">])</span> <span class="o">|</span> <span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Hypothesis&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">13</span><span class="p">)</span>
+    <span class="n">index_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">event_nos</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">starting_index</span> <span class="o">&lt;=</span> <span class="n">nRows</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">:</span>
+      <span class="n">ending_index</span> <span class="o">=</span> <span class="n">starting_index</span> <span class="o">+</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Number of Hypotheses&#39;</span><span class="p">][</span><span class="n">starting_index</span><span class="p">]</span>
+      <span class="n">index_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">starting_index</span><span class="p">,</span> <span class="n">ending_index</span><span class="p">))</span>
+      <span class="n">event_nos</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">starting_index</span><span class="p">,</span> <span class="n">ending_index</span><span class="p">)])</span>
+      <span class="n">i</span><span class="o">+=</span> <span class="mi">1</span>
+      <span class="n">starting_index</span> <span class="o">=</span> <span class="n">ending_index</span>
+    <span class="n">number_of_events</span> <span class="o">=</span> <span class="n">i</span>
+    <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;eventno&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">event_nos</span>
+    <span class="n">reduced_dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;is matched&#39;</span><span class="p">]]</span>
+    <span class="n">grouped</span> <span class="o">=</span> <span class="n">reduced_dataset</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="mi">1</span><span class="p">)[[</span><span class="s1">&#39;Prediction&#39;</span><span class="p">,</span><span class="s1">&#39;eventno&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;eventno&#39;</span><span class="p">)</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">grouped</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;eventno&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">number_of_events</span><span class="p">)),</span><span class="n">fill_value</span><span class="o">=</span><span class="mi">13</span><span class="p">)[</span><span class="s1">&#39;Prediction&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+    <span class="n">identities</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="n">target</span><span class="p">][</span><span class="n">starting_index</span><span class="p">])</span> <span class="k">for</span> <span class="n">starting_index</span><span class="p">,</span> <span class="n">ending_index</span> <span class="ow">in</span> <span class="n">index_list</span><span class="p">]</span>
+
+    <span class="n">confusion_matrix</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">identities</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span><span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">purity</span><span class="o">=</span><span class="n">purity</span><span class="p">,</span> <span class="n">label_selection</span><span class="o">=</span><span class="n">label_selection</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">confusion_matrix</span></div>
+
+  
+<div class="viewcode-block" id="ConfusionMatrix.from_model">
+<a class="viewcode-back" href="../../index.html#pidp_tools.analysis.ConfusionMatrix.from_model">[docs]</a>
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">from_model</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;Generated As&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">purity</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">match_hypothesis</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">label_selection</span><span class="o">=</span><span class="s2">&quot;charge&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a confusion matrix based on the predictions made by the provided model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model \: Any scikit-learn trained model with &quot;predict&quot; and &quot;predict_proba&quot; methods.</span>
+<span class="sd">        The model to be used to predict the particle type of the particles supplied in the dataframe.</span>
+<span class="sd">    df \: :external:class:`pandas.DataFrame`</span>
+<span class="sd">        The dataframe whose rows represent particles that can be identified by the model. Supplied dataframes should have a &quot;Hypothesis&quot; column, which contains either a str or int, and a &quot;Number of Hypotheses&quot; column, which contains an int.</span>
+<span class="sd">    target \: str, default &quot;Generated As&quot;</span>
+<span class="sd">        The target of the model. The supplied dataframe must have a column with this label.</span>
+<span class="sd">    title \: str, default &quot;&quot;</span>
+<span class="sd">        The title of the confusion matrix.</span>
+<span class="sd">    purity \: bool, default False</span>
+<span class="sd">        Normalize confusion matrix by columns instead of rows. If True, the sum of column values will be normalized to 1.</span>
+<span class="sd">    match_hypothesis \: bool, default False:</span>
+<span class="sd">        Require predictions to match the supplied hypothesis. If True, only considers predictions that match the hypothesis. Neutral particles, which have no hypothesis, are still considered in the typical sense. If False, the prediction of the model is the most frequent prediction among all hypotheses.</span>
+<span class="sd">    label_selection \: {&quot;all&quot;, &quot;charge&quot;, &quot;necessary&quot;}, default &quot;necessary&quot;</span>
+<span class="sd">        The way to determine which columns and rows to include in the confusion matrix:</span>
+
+<span class="sd">        - &quot;all&quot;\: Includes all particle rows and columns, even if they are entirely empty.</span>
+<span class="sd">        - &quot;charge&quot;\: Includes all of the particle types included in the labels and predictions, plus all particles of the same charge category (charged, neutral) as those included in the labels and predictions.</span>
+<span class="sd">        - &quot;necessary&quot;\: Includes only those particles that are included in the labels or predictions.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :class:`ConfusionMatrix`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">particle_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Photon&quot;</span><span class="p">,</span><span class="s2">&quot;KLong&quot;</span><span class="p">,</span><span class="s2">&quot;Neutron&quot;</span><span class="p">,</span><span class="s2">&quot;Proton&quot;</span><span class="p">,</span><span class="s2">&quot;K+&quot;</span><span class="p">,</span><span class="s2">&quot;Pi+&quot;</span><span class="p">,</span><span class="s2">&quot;AntiMuon&quot;</span><span class="p">,</span><span class="s2">&quot;Positron&quot;</span><span class="p">,</span><span class="s2">&quot;AntiProton&quot;</span><span class="p">,</span><span class="s2">&quot;K-&quot;</span><span class="p">,</span><span class="s2">&quot;Pi-&quot;</span><span class="p">,</span><span class="s2">&quot;Muon&quot;</span><span class="p">,</span><span class="s2">&quot;Electron&quot;</span><span class="p">,</span><span class="s2">&quot;No ID&quot;</span><span class="p">]</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">identities</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">data_to_test</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[[</span><span class="n">column</span> <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">feature_names_in_</span><span class="p">]]</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Hypothesis&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="nb">str</span><span class="p">):</span>
+      <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Hypothesis&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Hypothesis&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">particle_list</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Generated As&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="nb">str</span><span class="p">):</span>
+      <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Generated As&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Generated As&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">particle_list</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+    <span class="n">nRows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="n">starting_index</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">index_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">event_nos</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">starting_index</span> <span class="o">&lt;=</span> <span class="n">nRows</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">:</span>
+      <span class="n">ending_index</span> <span class="o">=</span> <span class="n">starting_index</span> <span class="o">+</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Number of Hypotheses&#39;</span><span class="p">][</span><span class="n">starting_index</span><span class="p">]</span>
+      <span class="n">index_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">starting_index</span><span class="p">,</span> <span class="n">ending_index</span><span class="p">))</span>
+      <span class="n">event_nos</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">starting_index</span><span class="p">,</span> <span class="n">ending_index</span><span class="p">)])</span>
+      <span class="n">i</span><span class="o">+=</span> <span class="mi">1</span>
+      <span class="n">starting_index</span> <span class="o">=</span> <span class="n">ending_index</span>
+    <span class="n">number_of_events</span> <span class="o">=</span> <span class="n">i</span>
+    <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;eventNo&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">event_nos</span>
+
+    <span class="k">if</span> <span class="n">match_hypothesis</span><span class="p">:</span>
+      <span class="n">temp_predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">data_to_test</span><span class="p">)</span>
+      <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Confidence&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">max</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span> <span class="k">for</span> <span class="n">probs</span> <span class="ow">in</span> <span class="n">temp_predictions</span><span class="p">]</span>
+      <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Prediction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">classes_</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">temp_predictions</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
+
+      <span class="n">identities_grouped</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[[</span><span class="s1">&#39;Generated As&#39;</span><span class="p">,</span><span class="s1">&#39;Prediction&#39;</span><span class="p">,</span><span class="s1">&#39;eventNo&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;eventNo&#39;</span><span class="p">)</span>
+      <span class="n">identities</span> <span class="o">=</span> <span class="n">identities_grouped</span><span class="p">[</span><span class="s1">&#39;Generated As&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+
+      <span class="n">matches_hypotheses_bool_list</span> <span class="o">=</span> <span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Prediction&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Hypothesis&#39;</span><span class="p">])</span> <span class="o">|</span> <span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Hypothesis&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">13</span><span class="p">)</span>
+      <span class="n">matching_hypotheses</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">matches_hypotheses_bool_list</span><span class="p">]</span>
+      <span class="n">grouped_df</span> <span class="o">=</span> <span class="n">matching_hypotheses</span><span class="p">[[</span><span class="s1">&#39;Generated As&#39;</span><span class="p">,</span><span class="s1">&#39;Prediction&#39;</span><span class="p">,</span><span class="s1">&#39;Confidence&#39;</span><span class="p">,</span><span class="s1">&#39;eventNo&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;eventNo&#39;</span><span class="p">)</span>
+      <span class="n">max_confidence_indices</span> <span class="o">=</span> <span class="n">grouped_df</span><span class="p">[</span><span class="s1">&#39;Confidence&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()</span>
+      <span class="n">predictions_temp</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[[</span><span class="s1">&#39;Prediction&#39;</span><span class="p">,</span><span class="s1">&#39;eventNo&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">max_confidence_indices</span><span class="p">]</span>
+      
+      <span class="n">predictions</span> <span class="o">=</span> <span class="n">predictions_temp</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;eventNo&#39;</span><span class="p">)[</span><span class="s1">&#39;Prediction&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">number_of_events</span><span class="p">)),</span><span class="n">fill_value</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Prediction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data_to_test</span><span class="p">)</span>
+      <span class="n">grouped_df</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[[</span><span class="s1">&#39;Generated As&#39;</span><span class="p">,</span><span class="s1">&#39;Prediction&#39;</span><span class="p">,</span><span class="s1">&#39;eventNo&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;eventNo&#39;</span><span class="p">)</span>
+      <span class="n">identities</span> <span class="o">=</span> <span class="n">grouped_df</span><span class="p">[</span><span class="s1">&#39;Generated As&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+      <span class="n">predictions</span> <span class="o">=</span> <span class="n">grouped_df</span><span class="p">[</span><span class="s1">&#39;Prediction&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+
+    <span class="n">confusion_matrix</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">identities</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span><span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">purity</span><span class="o">=</span><span class="n">purity</span><span class="p">,</span> <span class="n">label_selection</span><span class="o">=</span><span class="n">label_selection</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">confusion_matrix</span></div>
+
+
+<div class="viewcode-block" id="ConfusionMatrix.calculate_matrix">
+<a class="viewcode-back" href="../../index.html#pidp_tools.analysis.ConfusionMatrix.calculate_matrix">[docs]</a>
+  <span class="k">def</span> <span class="nf">calculate_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">predictions</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates the confusion matrix based on a collection of labels and predictions. </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    labels \: list</span>
+<span class="sd">        A list of integers that represent the true particle type for a series of events.</span>
+<span class="sd">    predictions \: list</span>
+<span class="sd">        A list of integers that represent the predicted particle type for a series of events.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">temp_confusion_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">13</span><span class="p">,</span><span class="mi">14</span><span class="p">))</span>
+    <span class="n">particle_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Photon&quot;</span><span class="p">,</span><span class="s2">&quot;KLong&quot;</span><span class="p">,</span><span class="s2">&quot;Neutron&quot;</span><span class="p">,</span><span class="s2">&quot;Proton&quot;</span><span class="p">,</span><span class="s2">&quot;K+&quot;</span><span class="p">,</span><span class="s2">&quot;Pi+&quot;</span><span class="p">,</span><span class="s2">&quot;AntiMuon&quot;</span><span class="p">,</span><span class="s2">&quot;Positron&quot;</span><span class="p">,</span><span class="s2">&quot;AntiProton&quot;</span><span class="p">,</span><span class="s2">&quot;K-&quot;</span><span class="p">,</span><span class="s2">&quot;Pi-&quot;</span><span class="p">,</span><span class="s2">&quot;Muon&quot;</span><span class="p">,</span><span class="s2">&quot;Electron&quot;</span><span class="p">,</span><span class="s2">&quot;No ID&quot;</span><span class="p">]</span>
+    <span class="n">particle_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">particle_list</span><span class="p">)</span>
+
+    <span class="k">match</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_selection</span><span class="p">:</span>
+      <span class="k">case</span> <span class="s1">&#39;charge&#39;</span><span class="p">:</span>
+        <span class="n">included_particles</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">predictions</span><span class="p">)))</span>
+        <span class="n">contains_neutral_particles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">([</span><span class="n">i</span> <span class="ow">in</span> <span class="n">included_particles</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]])</span>
+        <span class="n">contains_charged_particles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">([</span><span class="n">i</span> <span class="ow">in</span> <span class="n">included_particles</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">12</span><span class="p">]])</span>
+        <span class="k">if</span> <span class="n">contains_charged_particles</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">contains_neutral_particles</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">included_particles</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">12</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">contains_neutral_particles</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">contains_charged_particles</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">included_particles</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">included_particles</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">13</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_labels</span> <span class="o">=</span> <span class="n">particle_array</span><span class="p">[[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">included_particles</span><span class="p">,</span> <span class="mi">13</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_labels</span> <span class="o">=</span> <span class="n">particle_array</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">included_particles</span><span class="p">]</span>
+      <span class="k">case</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">included_particles</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">13</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_labels</span> <span class="o">=</span> <span class="n">particle_array</span><span class="p">[[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">included_particles</span><span class="p">,</span> <span class="mi">13</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_labels</span> <span class="o">=</span> <span class="n">particle_array</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">included_particles</span><span class="p">]</span>
+      <span class="k">case</span> <span class="s1">&#39;necessary&#39;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">included_particles</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">predictions</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">included_particles</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="k">if</span> <span class="mi">13</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">included_particles</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">included_particles</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">included_particles</span> <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">13</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_labels</span> <span class="o">=</span> <span class="n">particle_array</span><span class="p">[[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">included_particles</span><span class="p">,</span> <span class="mi">13</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_labels</span> <span class="o">=</span> <span class="n">particle_array</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">included_particles</span><span class="p">]</span>
+      <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Label selection must be one of the following: &#39;charge&#39;,&#39;all&#39;,&#39;necessary&#39;&quot;</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">nXticks</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_labels</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">nYticks</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_labels</span><span class="p">)</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="n">temp_confusion_matrix</span><span class="p">,(</span><span class="n">labels</span><span class="p">,</span><span class="n">predictions</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">temp_confusion_matrix</span><span class="p">[:,</span> <span class="mi">13</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="n">temp_confusion_matrix</span> <span class="o">=</span> <span class="n">temp_confusion_matrix</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">included_particles</span><span class="p">,</span> <span class="p">:]</span>
+      <span class="n">temp_confusion_matrix</span> <span class="o">=</span> <span class="n">temp_confusion_matrix</span><span class="p">[:,[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">included_particles</span><span class="p">,</span><span class="mi">13</span><span class="p">]]</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">temp_confusion_matrix</span> <span class="o">=</span> <span class="n">temp_confusion_matrix</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">included_particles</span><span class="p">,</span> <span class="p">:]</span>
+      <span class="n">temp_confusion_matrix</span> <span class="o">=</span> <span class="n">temp_confusion_matrix</span><span class="p">[:,</span><span class="bp">self</span><span class="o">.</span><span class="n">included_particles</span><span class="p">]</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">x_labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_labels</span> <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="s2">&quot;No ID&quot;</span><span class="p">]</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">nXticks</span> <span class="o">-=</span> <span class="mi">1</span>
+
+    
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">purity</span><span class="p">:</span>
+      <span class="n">temp_confusion_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">temp_confusion_matrix</span><span class="p">)</span>
+    
+    <span class="bp">self</span><span class="o">.</span><span class="n">confusion_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">temp_confusion_matrix</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">temp_confusion_matrix</span><span class="p">)):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">confusion_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span> <span class="n">temp_confusion_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="n">temp_confusion_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">temp_confusion_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">temp_confusion_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">purity</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">confusion_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">confusion_matrix</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConfusionMatrix.display_matrix">
+<a class="viewcode-back" href="../../index.html#pidp_tools.analysis.ConfusionMatrix.display_matrix">[docs]</a>
+  <span class="k">def</span> <span class="nf">display_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Displays the confusion matrix. </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    title \: str, default &quot;&quot;</span>
+<span class="sd">        The title of the confusion matrix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">im</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">confusion_matrix</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">cmap_min</span><span class="p">,</span> <span class="n">cmap_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">im</span><span class="o">.</span><span class="n">cmap</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">im</span><span class="o">.</span><span class="n">cmap</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">confusion_matrix</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+    <span class="n">thresh</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">confusion_matrix</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">confusion_matrix</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nYticks</span><span class="p">):</span>
+      <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nXticks</span><span class="p">):</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">cmap_max</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">confusion_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">thresh</span> <span class="k">else</span> <span class="n">cmap_min</span>
+        <span class="n">text_cm</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">confusion_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">text_cm</span><span class="p">)</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="mi">0</span><span class="p">):</span>
+          <span class="n">text_cm</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">default_text_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+        <span class="n">text_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">default_text_kwargs</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">text_cm</span><span class="p">,</span> <span class="o">**</span><span class="n">text_kwargs</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">im</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xticks</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nXticks</span><span class="p">),</span><span class="n">yticks</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nYticks</span><span class="p">),</span><span class="n">xticklabels</span><span class="o">=</span><span class="p">[</span><span class="n">format_labels</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_labels</span><span class="p">],</span><span class="n">yticklabels</span><span class="o">=</span><span class="p">[</span><span class="n">format_labels</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_labels</span><span class="p">],</span><span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Generated As&quot;</span><span class="p">,</span><span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Identified As&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">nYticks</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">))</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">set_figheight</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">set_figwidth</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+  
+  <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s2">&quot;&quot;</span> </div>
+
+
+<div class="viewcode-block" id="split_df">
+<a class="viewcode-back" href="../../index.html#pidp_tools.analysis.split_df">[docs]</a>
+<span class="k">def</span> <span class="nf">split_df</span><span class="p">(</span><span class="n">input_df</span><span class="p">,</span> <span class="n">training_fraction</span><span class="o">=</span><span class="mf">0.9</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Splits the supplied dataframe into training data and test data, preserving hypothesis groups.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input_df \: :external:class:`pandas.DataFrame`</span>
+<span class="sd">        The dataframe to split. The supplied dataframe should have a &quot;Number of Hypotheses&quot; column.</span>
+<span class="sd">    training_fraction \: float, default 0.9</span>
+<span class="sd">        The fraction of events to be included in the training dataset. All remaining events will be included in the test dataset.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    training \: :external:class:`pandas.DataFrame`</span>
+<span class="sd">        A dataframe containing the requested fraction of the input data.</span>
+<span class="sd">    test \: :external:class:`pandas.DataFrame`</span>
+<span class="sd">        A dataframe containing the rows of the input data not included in the training dataset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+  <span class="k">if</span> <span class="nb">round</span><span class="p">(</span><span class="n">training_fraction</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mf">1.</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot create split dataset with such a large training fraction. Reduce the training fraction.&quot;</span><span class="p">)</span>
+  <span class="k">elif</span> <span class="nb">round</span><span class="p">(</span><span class="n">training_fraction</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot create split dataset with such a small training fraction. Increase the training fraction.&quot;</span><span class="p">)</span>
+  <span class="k">elif</span> <span class="n">training_fraction</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">training_fraction</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;training_fraction must be between 0 and 1.&quot;</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nb">round</span><span class="p">(</span><span class="n">training_fraction</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
+    <span class="n">switch_train_test</span><span class="o">=</span> <span class="kc">True</span>
+    <span class="n">every_n_events</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">((</span><span class="mi">1</span><span class="o">-</span><span class="n">training_fraction</span><span class="p">)</span><span class="o">/</span><span class="n">training_fraction</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="n">switch_train_test</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">every_n_events</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">training_fraction</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">training_fraction</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="n">df</span> <span class="o">=</span> <span class="n">input_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+  <span class="n">nRows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+  <span class="n">starting_index</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="n">training_list</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">test_list</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="k">while</span> <span class="n">starting_index</span> <span class="o">&lt;=</span> <span class="n">nRows</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">:</span>
+    <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">ending_index</span> <span class="o">=</span> <span class="n">starting_index</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Number of Hypotheses&#39;</span><span class="p">][</span><span class="n">starting_index</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">counter</span> <span class="o">%</span> <span class="n">every_n_events</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="n">test_list</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="ow">not</span> <span class="n">switch_train_test</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">starting_index</span><span class="p">,</span> <span class="n">ending_index</span><span class="p">)])</span>
+      <span class="n">training_list</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">switch_train_test</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">starting_index</span><span class="p">,</span> <span class="n">ending_index</span><span class="p">)])</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">test_list</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">switch_train_test</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">starting_index</span><span class="p">,</span> <span class="n">ending_index</span><span class="p">)])</span>
+      <span class="n">training_list</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="ow">not</span> <span class="n">switch_train_test</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">starting_index</span><span class="p">,</span> <span class="n">ending_index</span><span class="p">)])</span>
+    <span class="n">starting_index</span> <span class="o">=</span> <span class="n">ending_index</span>
+  <span class="n">test</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">test_list</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+  <span class="n">training</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">training_list</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">training</span><span class="p">,</span> <span class="n">test</span></div>
+
+
+<div class="viewcode-block" id="grab_events">
+<a class="viewcode-back" href="../../index.html#pidp_tools.analysis.grab_events">[docs]</a>
+<span class="k">def</span> <span class="nf">grab_events</span><span class="p">(</span><span class="n">input_df</span><span class="p">,</span> <span class="n">n_each</span> <span class="o">=</span> <span class="mi">5000</span><span class="p">,</span><span class="n">reverse</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">return_strings</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">allow_less</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Grabs the selected number of events for each particle type, preserving hypothesis groups.</span>
+
+<span class="sd">  Parameters</span>
+<span class="sd">  ----------</span>
+<span class="sd">  input_df \: :external:class:`pandas.DataFrame`</span>
+<span class="sd">      The dataframe to grab events from. The supplied dataframe should have a &quot;Number of Hypotheses&quot; column.</span>
+<span class="sd">  n_each \: int, default 5000</span>
+<span class="sd">      The number of events of each particle type to include in the resulting dataset. The number of events for each particle type may be smaller if &quot;allow_less&quot; is True.</span>
+<span class="sd">  reverse \: bool, default False</span>
+<span class="sd">      Grab events from the end of the dataframe first. If True, events are grabbed from the end of the file first.</span>
+<span class="sd">  return_strings \: bool, default False</span>
+<span class="sd">      Return a dataframe in which the &quot;Hypothesis&quot; and &quot;Generated As&quot; columns contain strings instead of integers. If True, the returned dataframe will have strings in the &quot;Hypothesis&quot; and &quot;Generated As&quot; columns.</span>
+<span class="sd">  allow_less \: bool, default False</span>
+<span class="sd">      Allow the final dataframe to have fewer than the requested number of events if not enough data is available. If True, the resulting dataframe may not have the requested number of events for each particle, and the number of events may be different for each particle type.</span>
+<span class="sd">        </span>
+<span class="sd">  Returns</span>
+<span class="sd">  -------</span>
+<span class="sd">  smaller_dataset \: :external:class:`pandas.DataFrame`</span>
+<span class="sd">      A dataframe containing the events grabbed from the input dataframe.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+  <span class="n">particle_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Photon&quot;</span><span class="p">,</span><span class="s2">&quot;KLong&quot;</span><span class="p">,</span><span class="s2">&quot;Neutron&quot;</span><span class="p">,</span><span class="s2">&quot;Proton&quot;</span><span class="p">,</span><span class="s2">&quot;K+&quot;</span><span class="p">,</span><span class="s2">&quot;Pi+&quot;</span><span class="p">,</span><span class="s2">&quot;AntiMuon&quot;</span><span class="p">,</span><span class="s2">&quot;Positron&quot;</span><span class="p">,</span><span class="s2">&quot;AntiProton&quot;</span><span class="p">,</span><span class="s2">&quot;K-&quot;</span><span class="p">,</span><span class="s2">&quot;Pi-&quot;</span><span class="p">,</span><span class="s2">&quot;Muon&quot;</span><span class="p">,</span><span class="s2">&quot;Electron&quot;</span><span class="p">,</span><span class="s2">&quot;No ID&quot;</span><span class="p">]</span>
+  <span class="k">if</span> <span class="n">reverse</span><span class="p">:</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">input_df</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">input_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Hypothesis&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="nb">str</span><span class="p">):</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Hypothesis&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Hypothesis&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">particle_list</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Generated As&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="nb">str</span><span class="p">):</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Generated As&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Generated As&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">particle_list</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+  <span class="n">nRows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+  <span class="n">starting_index</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="n">training_list</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">include_list</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="k">if</span> <span class="n">reverse</span><span class="p">:</span>
+    <span class="n">current_particle</span> <span class="o">=</span> <span class="mi">12</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="n">current_particle</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="k">while</span> <span class="n">starting_index</span> <span class="o">&lt;=</span> <span class="n">nRows</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">:</span>
+    <span class="k">if</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Generated As&#39;</span><span class="p">][</span><span class="n">starting_index</span><span class="p">]</span> <span class="o">!=</span> <span class="n">current_particle</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">counter</span> <span class="o">&lt;=</span> <span class="n">n_each</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">allow_less</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Not enough rows in dataframe to grab &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">n_each</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; events of &quot;</span> <span class="o">+</span> <span class="n">particle_list</span><span class="p">[</span><span class="n">current_particle</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot; events.&quot;</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">reverse</span><span class="p">:</span>
+        <span class="n">current_particle</span> <span class="o">-=</span> <span class="mi">1</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">current_particle</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">ending_index</span> <span class="o">=</span> <span class="n">starting_index</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Number of Hypotheses&#39;</span><span class="p">][</span><span class="n">starting_index</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">counter</span> <span class="o">&lt;=</span> <span class="n">n_each</span><span class="p">:</span>
+      <span class="n">include_list</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="kc">True</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">starting_index</span><span class="p">,</span> <span class="n">ending_index</span><span class="p">)])</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">include_list</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="kc">False</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">starting_index</span><span class="p">,</span> <span class="n">ending_index</span><span class="p">)])</span>
+    <span class="n">starting_index</span> <span class="o">=</span> <span class="n">ending_index</span>
+  <span class="k">if</span> <span class="n">return_strings</span><span class="p">:</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Hypothesis&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Hypothesis&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">particle_list</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
+  <span class="k">if</span> <span class="n">return_strings</span><span class="p">:</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Generated As&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Generated As&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">particle_list</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
+  <span class="n">smaller_dataset</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">include_list</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">smaller_dataset</span></div>
+
+
+<div class="viewcode-block" id="feature_importance">
+<a class="viewcode-back" href="../../index.html#pidp_tools.analysis.feature_importance">[docs]</a>
+<span class="k">def</span> <span class="nf">feature_importance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s1">&#39;Generated As&#39;</span><span class="p">,</span> <span class="n">match_hypothesis</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">n_repetitions</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_each</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Calculates and plots the permutation feature importances of the features supplied to the provided model.</span>
+
+<span class="sd">  Parameters</span>
+<span class="sd">  ----------</span>
+<span class="sd">  model \: Any scikit-learn trained model with &quot;predict&quot; and &quot;predict_proba&quot; methods.</span>
+<span class="sd">      The model to be used to predict the particle type of the particles supplied in the dataframe.</span>
+<span class="sd">  df \: :external:class:`pandas.DataFrame`</span>
+<span class="sd">      The dataframe whose rows represent particles that can be identified by the model. Supplied dataframes should have a &quot;Hypothesis&quot; column, which contains either a str or int, and a &quot;Number of Hypotheses&quot; column, which contains an int.</span>
+<span class="sd">  target \: str, default &quot;Generated As&quot;</span>
+<span class="sd">      The target of the model. The supplied dataframe must have a column with this label.</span>
+<span class="sd">  match_hypothesis \: bool, default False:</span>
+<span class="sd">      Require predictions to match the supplied hypothesis. If True, only considers predictions that match the hypothesis. Neutral particles, which have no hypothesis, are still considered in the typical sense. If False, the prediction of the model is the most frequent prediction among all hypotheses.</span>
+<span class="sd">  n_repetitions \: int, default 3</span>
+<span class="sd">      The number of times to permute each feature. The feature importance is the average accuracy over all of the repetitions.</span>
+<span class="sd">  n_each \: int, default 100</span>
+<span class="sd">      The number of events of each particle type to include in each permutation test.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">test_data</span> <span class="o">=</span> <span class="n">grab_events</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">n_each</span><span class="o">=</span><span class="n">n_each</span><span class="p">)</span>
+  <span class="n">x_test</span> <span class="o">=</span> <span class="n">test_data</span><span class="p">[[</span><span class="n">column</span> <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">feature_names_in_</span><span class="p">]]</span>
+  <span class="n">y_test</span> <span class="o">=</span> <span class="n">test_data</span><span class="p">[</span><span class="n">target</span><span class="p">]</span>
+  <span class="n">importances</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">n_features_to_shuffle</span> <span class="o">=</span> <span class="nb">len</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x_test</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="s2">&quot;Number of Hypotheses&quot;</span><span class="p">])</span>
+  <span class="n">starting_index</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="n">predictions</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">identities</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">hypotheses</span> <span class="o">=</span> <span class="n">test_data</span><span class="p">[</span><span class="s1">&#39;Hypothesis&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+  <span class="n">length_of_df</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_test</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+  <span class="n">dfs_to_combine</span> <span class="o">=</span> <span class="p">[</span><span class="n">x_test</span><span class="p">]</span>
+  <span class="n">total_rows</span> <span class="o">=</span> <span class="n">length_of_df</span>
+
+  <span class="k">for</span> <span class="n">column_to_shuffle</span> <span class="ow">in</span> <span class="n">x_test</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">column_to_shuffle</span> <span class="o">==</span> <span class="s2">&quot;Number of Hypotheses&quot;</span><span class="p">:</span>
+      <span class="k">continue</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_repetitions</span><span class="p">):</span>
+      <span class="n">total_rows</span> <span class="o">+=</span> <span class="n">length_of_df</span>
+      <span class="n">shuffled_dataframe</span> <span class="o">=</span> <span class="n">x_test</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+      <span class="n">shuffled_dataframe</span><span class="p">[</span><span class="n">column_to_shuffle</span><span class="p">]</span> <span class="o">=</span> <span class="n">shuffled_dataframe</span><span class="p">[</span><span class="n">column_to_shuffle</span><span class="p">]</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+      <span class="n">hypotheses</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">test_data</span><span class="p">[</span><span class="s1">&#39;Hypothesis&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">())</span>
+      <span class="n">dfs_to_combine</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">shuffled_dataframe</span><span class="p">)</span>
+  <span class="n">new_test</span> <span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">dfs_to_combine</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+  <span class="n">index_list</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">event_nos</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="n">nRows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_test</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+  <span class="k">while</span> <span class="n">starting_index</span> <span class="o">&lt;=</span> <span class="n">nRows</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">:</span>
+    <span class="n">ending_index</span> <span class="o">=</span> <span class="n">starting_index</span> <span class="o">+</span> <span class="n">new_test</span><span class="p">[</span><span class="s1">&#39;Number of Hypotheses&#39;</span><span class="p">][</span><span class="n">starting_index</span><span class="p">]</span>
+    <span class="n">index_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">starting_index</span><span class="p">,</span> <span class="n">ending_index</span><span class="p">))</span>
+    <span class="n">event_nos</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">starting_index</span><span class="p">,</span> <span class="n">ending_index</span><span class="p">)])</span>
+    <span class="n">i</span><span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">starting_index</span> <span class="o">=</span> <span class="n">ending_index</span>
+  <span class="n">number_of_events</span> <span class="o">=</span> <span class="n">i</span>
+
+  <span class="n">identities</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">y_test</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="n">length_of_df</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">index_list</span><span class="p">]</span>
+
+  <span class="k">if</span> <span class="n">match_hypothesis</span><span class="p">:</span>
+    <span class="n">temp_predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">new_test</span><span class="p">)</span>
+    <span class="n">new_test</span><span class="p">[</span><span class="s1">&#39;Confidence&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">max</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span> <span class="k">for</span> <span class="n">probs</span> <span class="ow">in</span> <span class="n">temp_predictions</span><span class="p">]</span>
+    <span class="n">new_test</span><span class="p">[</span><span class="s1">&#39;Prediction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">temp_predictions</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">matches_hypotheses_bool_list</span> <span class="o">=</span> <span class="p">(</span><span class="n">new_test</span><span class="p">[</span><span class="s1">&#39;Prediction&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">new_test</span><span class="p">[</span><span class="s1">&#39;Hypothesis&#39;</span><span class="p">])</span> <span class="o">|</span> <span class="p">(</span><span class="n">new_test</span><span class="p">[</span><span class="s1">&#39;Hypothesis&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">13</span><span class="p">)</span>
+    <span class="n">matching_hypotheses</span> <span class="o">=</span> <span class="n">new_test</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">matches_hypotheses_bool_list</span><span class="p">]</span>
+    <span class="n">grouped_df</span> <span class="o">=</span> <span class="n">matching_hypotheses</span><span class="p">[[</span><span class="s1">&#39;Prediction&#39;</span><span class="p">,</span><span class="s1">&#39;Confidence&#39;</span><span class="p">,</span><span class="s1">&#39;eventNo&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;eventNo&#39;</span><span class="p">)</span>
+    <span class="n">max_confidence_indices</span> <span class="o">=</span> <span class="n">grouped_df</span><span class="p">[</span><span class="s1">&#39;Confidence&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()</span>
+    <span class="n">predictions_temp</span> <span class="o">=</span> <span class="n">new_test</span><span class="p">[</span><span class="s1">&#39;Prediction&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">max_confidence_indices</span><span class="p">]</span>
+      
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">predictions_temp</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;eventNo&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">number_of_events</span><span class="p">)),</span><span class="n">fill_value</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span><span class="o">.</span><span class="n">to_list</span>
+    <span class="n">identities</span> <span class="o">=</span> <span class="n">grouped_df</span><span class="p">[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="n">new_test</span><span class="p">[</span><span class="s1">&#39;Prediction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">new_test</span><span class="p">)</span>
+    <span class="n">new_test</span><span class="p">[</span><span class="s1">&#39;eventNo&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">event_nos</span>
+    <span class="n">grouped_df</span> <span class="o">=</span> <span class="n">new_test</span><span class="p">[[</span><span class="s1">&#39;Prediction&#39;</span><span class="p">,</span><span class="s1">&#39;eventNo&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;eventNo&#39;</span><span class="p">)</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">grouped_df</span><span class="p">[</span><span class="s1">&#39;Prediction&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+    
+  <span class="n">identities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">identities</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span> <span class="nb">int</span><span class="p">)</span>
+  <span class="n">predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span> <span class="nb">int</span><span class="p">)</span>
+  <span class="n">starting_accuracy</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">identities</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">13</span><span class="o">*</span> <span class="n">n_each</span><span class="p">],</span><span class="n">predictions</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">13</span> <span class="o">*</span> <span class="n">n_each</span><span class="p">])</span>
+  <span class="n">importances</span> <span class="o">=</span> <span class="p">[</span><span class="n">starting_accuracy</span><span class="o">-</span><span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">identities</span><span class="p">[</span><span class="mi">13</span><span class="o">*</span><span class="n">n_each</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">*</span><span class="n">n_repetitions</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span><span class="mi">13</span><span class="o">*</span><span class="n">n_each</span><span class="o">*</span><span class="p">((</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">n_repetitions</span><span class="o">+</span><span class="mi">1</span><span class="p">)],</span> <span class="n">predictions</span><span class="p">[</span><span class="mi">13</span><span class="o">*</span><span class="n">n_each</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">*</span><span class="n">n_repetitions</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span><span class="mi">13</span><span class="o">*</span> <span class="n">n_each</span><span class="o">*</span><span class="p">((</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">n_repetitions</span><span class="o">+</span><span class="mi">1</span><span class="p">)])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_features_to_shuffle</span><span class="p">)]</span>
+  <span class="n">important_features</span> <span class="o">=</span> <span class="p">[</span><span class="n">model</span><span class="o">.</span><span class="n">feature_names_in_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_features_to_shuffle</span><span class="p">)</span> <span class="k">if</span> <span class="n">importances</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.005</span><span class="p">]</span>
+  <span class="n">important_importances</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">importances</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mf">0.005</span><span class="p">]</span>
+  <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">important_features</span><span class="p">,</span><span class="n">important_importances</span><span class="p">)</span>
+  <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Feature Importances&quot;</span><span class="p">)</span>
+  <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Feature Name&quot;</span><span class="p">)</span>
+  <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Feature Importance&quot;</span><span class="p">)</span>
+  <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+  <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="save_model">
+<a class="viewcode-back" href="../../index.html#pidp_tools.analysis.save_model">[docs]</a>
+<span class="k">def</span> <span class="nf">save_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;my_model.joblib&quot;</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Saves a model as a joblib dump at the specified path.</span>
+
+<span class="sd">  Parameters</span>
+<span class="sd">  ----------</span>
+<span class="sd">  model \: Any scikit-learn trained model.</span>
+<span class="sd">      The model to be saved.</span>
+<span class="sd">  path \: str, default &quot;my_model.joblib&quot;</span>
+<span class="sd">      The path to the model save location.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Model saved as &#39;</span> <span class="o">+</span> <span class="n">path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="load_model">
+<a class="viewcode-back" href="../../index.html#pidp_tools.analysis.load_model">[docs]</a>
+<span class="k">def</span> <span class="nf">load_model</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s2">&quot;my_model.joblib&quot;</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Loads a model from a joblib dump at the specified path.</span>
+
+<span class="sd">  Parameters</span>
+<span class="sd">  ----------</span>
+<span class="sd">  path \: str, default &quot;my_model.joblib&quot;</span>
+<span class="sd">      The path to the model save location.</span>
+
+<span class="sd">  Returns</span>
+<span class="sd">  -------</span>
+<span class="sd">  model \: Scikit-learn trained model.</span>
+<span class="sd">      The loaded scikit-learn model.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loading model...&quot;</span><span class="p">)</span>
+  <span class="n">model</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Done loading model&quot;</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">model</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Richard Dube.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

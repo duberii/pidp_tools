@@ -8,6 +8,15 @@ import pandas as pd
 import warnings
 
 def install_ROOT():
+  """
+  Installs ROOT.
+
+  Examples
+  --------
+  >>> from pidp_tools import \*
+  >>> install_ROOT()
+  >>> from ROOT import \*
+  """
   import subprocess
   try:
     import ROOT
@@ -33,6 +42,21 @@ def install_ROOT():
       raise OSError("Unable to install ROOT. This install was designed specifically for use in google colab. Installing on personal computers is discouraged due to the file size.")
 
 def get_charge(ptype):
+  """
+  Returns the charge of the provided particle
+
+  Parameters
+  ----------
+  ptype \: str or int
+      The particle to find the charge of. If int, the particle is assumed to be the element of the following list with the corresponding index\: ["Photon", "KLong", "Neutron", "Proton", "K+", "Pi+", "AntiMuon", "Positron", "AntiProton", "K-", "Pi-", "Muon", "Electron", "No ID"].
+      
+  Examples
+  --------
+  >>> get_charge("AntiProton")
+  -1
+  >>> get_charge(3)
+  1
+  """
   if ptype in ["Electron", "Muon", "Pi-", "K-",'AntiProton',3,4,5,6,7]:
     return -1
   elif ptype in ["Positron","AntiMuon", "Pi+", "K+", "Proton",8,9,10,11,12]:
@@ -41,15 +65,51 @@ def get_charge(ptype):
     return 0
 
 def round_accuracies(num):
+  """
+  Rounds a number to 2 decimal places. If the rounded number is 0.00 or 1.00, an int is returned.
+
+  Parameters
+  ----------
+  num \: float or int
+      The number to round.
+      
+  Examples
+  --------
+  >>> round_accuracies(0.3333333)
+  0.33
+  >>> round_accuracies(0.001)
+  0
+  """
   new_num = round(num,2)
   if new_num == 0.00:
     return 0
+  elif new_num == 1.00:
+    return 1
   else:
     return new_num
 
 class ConfusionMatrix():
-  def __init__(self, labels, predictions, target='Generated As',title="", purity=False, label_selection="necessary"):
-    self.target = 'Generated As'
+  """
+  Creates a confusion matrix based on a collection of labels and predictions. 
+
+  Parameters
+  ----------
+  labels \: list
+      A list of strings or integers that represent the true particle type for a series of events.
+  predictions \: list
+      A list of strings or integers that represent the predicted particle type for a series of events.
+  title \: str, default ""
+      The title of the confusion matrix.
+  purity \: bool, default False
+      Normalize confusion matrix by columns instead of rows. If True, the sum of column values will be normalized to 1.
+  label_selection \: {"all", "charge", "necessary"}, default "necessary"
+      The way to determine which columns and rows to include in the confusion matrix:
+
+      - "all" \: Includes all particle rows and columns, even if they are entirely empty.
+      - "charge" \: Includes all of the particle types included in the labels and predictions, plus all particles of the same charge category (charged, neutral) as those included in the labels and predictions.
+      - "necessary" \: Includes only those particles that are included in the labels or predictions.
+  """
+  def __init__(self, labels, predictions, title="", purity=False, label_selection = "necessary"):
     self.title= title
     self.purity = purity
     self.label_selection = label_selection
@@ -63,12 +123,40 @@ class ConfusionMatrix():
 
     labels = [int(i) for i in labels]
     predictions = [int(i) for i in predictions]
+    if len(labels) != len(predictions):
+      raise ValueError("Labels and predictions must have same length. Labels has length " + str(len(labels)) + " and predictions has length " + str(len(predictions)) + ".")
+    
     self.calculate_matrix(labels, predictions)
     self.display_matrix(title)
   
   @classmethod
   def from_estimator(cls, estimator, df, target='Generated As', title="", purity=False, label_selection="necessary"):
+    """
+    Creates a confusion matrix based on the predictions made by the provided estimator.
 
+    Parameters
+    ----------
+    estimator \: function or method
+        The estimator to be used to identify particles. Estimators can take either rows of a dataframe and return a string (to be compatible with the .apply method of the dataframe object), or can take in an entire dataframe and return a series of strings.
+    df \: :external:class:`pandas.DataFrame`
+        The dataframe whose rows represent particles that can be identified by the estimator. Supplied dataframes should have a "Hypothesis" column, which contains either a str or int, and a "Number of Hypotheses" column, which contains an int.
+    target \: str, default "Generated As"
+        The target of the estimator. The supplied dataframe must have a column with this label.
+    title \: str, default ""
+        The title of the confusion matrix.
+    purity \: bool, default False
+        Normalize confusion matrix by columns instead of rows. If True, the sum of column values will be normalized to 1.
+    label_selection \: {"all", "charge", "necessary"}, default "necessary"
+        The way to determine which columns and rows to include in the confusion matrix:
+
+        - "all" \: Includes all particle rows and columns, even if they are entirely empty.
+        - "charge" \: Includes all of the particle types included in the labels and predictions, plus all particles of the same charge category (charged, neutral) as those included in the labels and predictions.
+        - "necessary" \: Includes only those particles that are included in the labels or predictions.
+
+    Returns
+    -------
+    :class:`ConfusionMatrix`
+    """
     # Initialize variables
     particle_list = ["Photon","KLong","Neutron","Proton","K+","Pi+","AntiMuon","Positron","AntiProton","K-","Pi-","Muon","Electron","No ID"]
     dataset = df.copy().reset_index(drop=True)
@@ -120,7 +208,34 @@ class ConfusionMatrix():
   
   @classmethod
   def from_model(cls, model, df, target="Generated As", title="", purity=False, match_hypothesis=False, label_selection="charge"):
+    """
+    Creates a confusion matrix based on the predictions made by the provided model.
 
+    Parameters
+    ----------
+    model \: Any scikit-learn trained model with "predict" and "predict_proba" methods.
+        The model to be used to predict the particle type of the particles supplied in the dataframe.
+    df \: :external:class:`pandas.DataFrame`
+        The dataframe whose rows represent particles that can be identified by the model. Supplied dataframes should have a "Hypothesis" column, which contains either a str or int, and a "Number of Hypotheses" column, which contains an int.
+    target \: str, default "Generated As"
+        The target of the model. The supplied dataframe must have a column with this label.
+    title \: str, default ""
+        The title of the confusion matrix.
+    purity \: bool, default False
+        Normalize confusion matrix by columns instead of rows. If True, the sum of column values will be normalized to 1.
+    match_hypothesis \: bool, default False:
+        Require predictions to match the supplied hypothesis. If True, only considers predictions that match the hypothesis. Neutral particles, which have no hypothesis, are still considered in the typical sense. If False, the prediction of the model is the most frequent prediction among all hypotheses.
+    label_selection \: {"all", "charge", "necessary"}, default "necessary"
+        The way to determine which columns and rows to include in the confusion matrix:
+
+        - "all"\: Includes all particle rows and columns, even if they are entirely empty.
+        - "charge"\: Includes all of the particle types included in the labels and predictions, plus all particles of the same charge category (charged, neutral) as those included in the labels and predictions.
+        - "necessary"\: Includes only those particles that are included in the labels or predictions.
+
+    Returns
+    -------
+    :class:`ConfusionMatrix`
+    """
     particle_list = ["Photon","KLong","Neutron","Proton","K+","Pi+","AntiMuon","Positron","AntiProton","K-","Pi-","Muon","Electron","No ID"]
     dataset = df.copy().reset_index(drop=True)
     predictions = []
@@ -172,6 +287,16 @@ class ConfusionMatrix():
     return confusion_matrix
 
   def calculate_matrix(self, labels, predictions):
+    """
+    Calculates the confusion matrix based on a collection of labels and predictions. 
+
+    Parameters
+    ----------
+    labels \: list
+        A list of integers that represent the true particle type for a series of events.
+    predictions \: list
+        A list of integers that represent the predicted particle type for a series of events.
+    """
     temp_confusion_matrix = np.zeros((13,14))
     particle_list = ["Photon","KLong","Neutron","Proton","K+","Pi+","AntiMuon","Positron","AntiProton","K-","Pi-","Muon","Electron","No ID"]
     particle_array = np.array(particle_list)
@@ -230,6 +355,14 @@ class ConfusionMatrix():
       self.confusion_matrix = np.transpose(self.confusion_matrix)
 
   def display_matrix(self, title):
+    """
+    Displays the confusion matrix. 
+
+    Parameters
+    ----------
+    title \: str, default ""
+        The title of the confusion matrix.
+    """
     self.fig, self.ax = plt.subplots()
     self.im = self.ax.imshow(self.confusion_matrix)
     self.text = None
@@ -258,10 +391,29 @@ class ConfusionMatrix():
     return "" 
 
 def split_df(input_df, training_fraction=0.9):
+  """
+    Splits the supplied dataframe into training data and test data, preserving hypothesis groups.
+
+    Parameters
+    ----------
+    input_df \: :external:class:`pandas.DataFrame`
+        The dataframe to split. The supplied dataframe should have a "Number of Hypotheses" column.
+    training_fraction \: float, default 0.9
+        The fraction of events to be included in the training dataset. All remaining events will be included in the test dataset.
+        
+    Returns
+    -------
+    training \: :external:class:`pandas.DataFrame`
+        A dataframe containing the requested fraction of the input data.
+    test \: :external:class:`pandas.DataFrame`
+        A dataframe containing the rows of the input data not included in the training dataset.
+    """
   if round(training_fraction,2) == 1.:
     raise ValueError("Cannot create split dataset with such a large training fraction. Reduce the training fraction.")
   elif round(training_fraction,2) == 0:
     raise ValueError("Cannot create split dataset with such a small training fraction. Increase the training fraction.")
+  elif training_fraction > 1 or training_fraction < 0:
+    raise ValueError("training_fraction must be between 0 and 1.")
   if round(training_fraction,2)< 0.5:
     switch_train_test= True
     every_n_events = int(round((1-training_fraction)/training_fraction) + 1)
@@ -289,6 +441,27 @@ def split_df(input_df, training_fraction=0.9):
   return training, test
 
 def grab_events(input_df, n_each = 5000,reverse = False, return_strings = False, allow_less=False):
+  """
+  Grabs the selected number of events for each particle type, preserving hypothesis groups.
+
+  Parameters
+  ----------
+  input_df \: :external:class:`pandas.DataFrame`
+      The dataframe to grab events from. The supplied dataframe should have a "Number of Hypotheses" column.
+  n_each \: int, default 5000
+      The number of events of each particle type to include in the resulting dataset. The number of events for each particle type may be smaller if "allow_less" is True.
+  reverse \: bool, default False
+      Grab events from the end of the dataframe first. If True, events are grabbed from the end of the file first.
+  return_strings \: bool, default False
+      Return a dataframe in which the "Hypothesis" and "Generated As" columns contain strings instead of integers. If True, the returned dataframe will have strings in the "Hypothesis" and "Generated As" columns.
+  allow_less \: bool, default False
+      Allow the final dataframe to have fewer than the requested number of events if not enough data is available. If True, the resulting dataframe may not have the requested number of events for each particle, and the number of events may be different for each particle type.
+        
+  Returns
+  -------
+  smaller_dataset \: :external:class:`pandas.DataFrame`
+      A dataframe containing the events grabbed from the input dataframe.
+    """
   particle_list = ["Photon","KLong","Neutron","Proton","K+","Pi+","AntiMuon","Positron","AntiProton","K-","Pi-","Muon","Electron","No ID"]
   if reverse:
     df = input_df[::-1].copy().reset_index(drop=True)
@@ -330,8 +503,26 @@ def grab_events(input_df, n_each = 5000,reverse = False, return_strings = False,
   smaller_dataset = df.loc[include_list].reset_index(drop=True)
   return smaller_dataset
 
-def feature_importance(model, test_data_full, target='Generated As', match_hypothesis=False,n_repetitions=3):
-  test_data = grab_events(test_data_full,n_each=100, allow_less=True)
+def feature_importance(model, df, target='Generated As', match_hypothesis=False, n_repetitions=3, n_each=100):
+  """
+  Calculates and plots the permutation feature importances of the features supplied to the provided model.
+
+  Parameters
+  ----------
+  model \: Any scikit-learn trained model with "predict" and "predict_proba" methods.
+      The model to be used to predict the particle type of the particles supplied in the dataframe.
+  df \: :external:class:`pandas.DataFrame`
+      The dataframe whose rows represent particles that can be identified by the model. Supplied dataframes should have a "Hypothesis" column, which contains either a str or int, and a "Number of Hypotheses" column, which contains an int.
+  target \: str, default "Generated As"
+      The target of the model. The supplied dataframe must have a column with this label.
+  match_hypothesis \: bool, default False:
+      Require predictions to match the supplied hypothesis. If True, only considers predictions that match the hypothesis. Neutral particles, which have no hypothesis, are still considered in the typical sense. If False, the prediction of the model is the most frequent prediction among all hypotheses.
+  n_repetitions \: int, default 3
+      The number of times to permute each feature. The feature importance is the average accuracy over all of the repetitions.
+  n_each \: int, default 100
+      The number of events of each particle type to include in each permutation test.
+  """
+  test_data = grab_events(df,n_each=n_each)
   x_test = test_data[[column for column in model.feature_names_in_]]
   y_test = test_data[target]
   importances = []
@@ -390,8 +581,8 @@ def feature_importance(model, test_data_full, target='Generated As', match_hypot
     
   identities = np.array(identities, dtype= int)
   predictions = np.array(predictions, dtype= int)
-  starting_accuracy = sklearn.metrics.accuracy_score(identities[0:1300],predictions[0:1300])
-  importances = [starting_accuracy-sklearn.metrics.accuracy_score(identities[1300*(i*n_repetitions+1):1300*((i+1)*n_repetitions+1)], predictions[1300*(i*n_repetitions+1):1300*((i+1)*n_repetitions+1)]) for i in range(n_features_to_shuffle)]
+  starting_accuracy = sklearn.metrics.accuracy_score(identities[0:13* n_each],predictions[0:13 * n_each])
+  importances = [starting_accuracy-sklearn.metrics.accuracy_score(identities[13*n_each*(i*n_repetitions+1):13*n_each*((i+1)*n_repetitions+1)], predictions[13*n_each*(i*n_repetitions+1):13* n_each*((i+1)*n_repetitions+1)]) for i in range(n_features_to_shuffle)]
   important_features = [model.feature_names_in_[i] for i in range(n_features_to_shuffle) if importances[i] > 0.005]
   important_importances = [i for i in importances if i > 0.005]
   plt.bar(important_features,important_importances)
@@ -402,10 +593,33 @@ def feature_importance(model, test_data_full, target='Generated As', match_hypot
   plt.show()
 
 def save_model(model, path="my_model.joblib"):
+  """
+  Saves a model as a joblib dump at the specified path.
+
+  Parameters
+  ----------
+  model \: Any scikit-learn trained model.
+      The model to be saved.
+  path \: str, default "my_model.joblib"
+      The path to the model save location.
+  """
   joblib.dump(model, path)
   print('Model saved as ' + path)
 
 def load_model(path="my_model.joblib"):
+  """
+  Loads a model from a joblib dump at the specified path.
+
+  Parameters
+  ----------
+  path \: str, default "my_model.joblib"
+      The path to the model save location.
+
+  Returns
+  -------
+  model \: Scikit-learn trained model.
+      The loaded scikit-learn model.
+  """
   print("Loading model...")
   model = joblib.load(path)
   print("Done loading model")

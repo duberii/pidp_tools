@@ -20,7 +20,6 @@ classifiers = [
 dependencies = [
     "matplotlib ~= 3.7",
     "numpy ~= 1.25",
-    "tqdm ~= 4.66",
     "scikit-learn ~= 1.2",
     "plotly ~= 5.15",
     "pandas ~= 2.0",

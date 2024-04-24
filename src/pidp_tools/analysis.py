@@ -3,9 +3,7 @@ import matplotlib.pyplot as plt
 from pidp_tools.formatting import format_labels
 import sklearn.metrics
 import joblib
-import tqdm
 import pandas as pd
-import warnings
 
 def install_ROOT():
   """

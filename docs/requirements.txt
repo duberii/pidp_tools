@@ -1,0 +1,9 @@
+matplotlib
+numpy
+scikit-learn
+plotly
+pandas
+ipywidgets
+Pillow
+joblib
+sphinx_rtd_theme

@@ -19,7 +19,7 @@ jobs:
           ls  # Print current working directory
       - name: Sphinx build
         run: |
-          sphinx-build . _build
+          sphinx-build docs docs/_build
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}

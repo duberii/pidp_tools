@@ -16,7 +16,7 @@ jobs:
           pip install sphinx sphinx_rtd_theme myst_parser
       - name: Print current working directory
         run: |
-          pwd  # Print current working directory
+          ls  # Print current working directory
       - name: Sphinx build
         run: |
           sphinx-build . _build

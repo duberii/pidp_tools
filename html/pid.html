@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pidp_tools.pid module &mdash; pidp_tools 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/documentation_options.js?v=8d563738"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pidp_tools.visualization module" href="visualization.html" />
+    <link rel="prev" title="pidp_tools.formatting module" href="formatting.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pidp_tools
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#installation">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis.html">pidp_tools.analysis module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="formatting.html">pidp_tools.formatting module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">pidp_tools.pid module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pidp_tools.pid.DIRC"><code class="docutils literal notranslate"><span class="pre">DIRC()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pidp_tools.pid.TOF"><code class="docutils literal notranslate"><span class="pre">TOF()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pidp_tools.pid.TOF_BCal"><code class="docutils literal notranslate"><span class="pre">TOF_BCal()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pidp_tools.pid.TOF_FCal"><code class="docutils literal notranslate"><span class="pre">TOF_FCal()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pidp_tools.pid.TOF_SC"><code class="docutils literal notranslate"><span class="pre">TOF_SC()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pidp_tools.pid.TOF_TOF"><code class="docutils literal notranslate"><span class="pre">TOF_TOF()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pidp_tools.pid.dEdx_CDC"><code class="docutils literal notranslate"><span class="pre">dEdx_CDC()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pidp_tools.pid.dEdx_FDC"><code class="docutils literal notranslate"><span class="pre">dEdx_FDC()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pidp_tools.pid.dEdx_SC"><code class="docutils literal notranslate"><span class="pre">dEdx_SC()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pidp_tools.pid.dEdx_TOF"><code class="docutils literal notranslate"><span class="pre">dEdx_TOF()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">pidp_tools.visualization module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pidp_tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">pidp_tools.pid module</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/duberii/pidp_tools/blob/master/source/pid.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pidp-tools-pid-module">
+<h1>pidp_tools.pid module<a class="headerlink" href="#pidp-tools-pid-module" title="Link to this heading">¶</a></h1>
+<p>This module contains a collection of PID functions.</p>
+<dl class="py function" id="module-pidp_tools.pid">
+<dt class="sig sig-object py" id="pidp_tools.pid.DIRC">
+<span class="sig-prename descclassname"><span class="pre">pidp_tools.pid.</span></span><span class="sig-name descname"><span class="pre">DIRC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">particle_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pidp_tools/pid.html#DIRC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pidp_tools.pid.DIRC" title="Link to this definition">¶</a></dt>
+<dd><p>Identifies particles based on their likelihood values produced by the GlueX Detection of Internally Reflected Cherenkov Radiation (DIRC) detector.</p>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>particle_df : <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></dt><dd><p>A dataframe containing particles to be identified. The supplied dataframe must have the following columns: “px”,”py”,”pz”, “Hypothesis”, “lp”, “lk”, “lpi”, and “lele”.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h2>Returns<a class="headerlink" href="#returns" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>predictions : <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.Series</span></code></a></dt><dd><p>The predictions based on DIRC likelihood cuts.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pidp_tools.pid.TOF">
+<span class="sig-prename descclassname"><span class="pre">pidp_tools.pid.</span></span><span class="sig-name descname"><span class="pre">TOF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">particle_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pidp_tools/pid.html#TOF"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pidp_tools.pid.TOF" title="Link to this definition">¶</a></dt>
+<dd><p>Identifies particles based on their best-available time of flight, as measured by the GlueX Barrel Calorimeter (BCal), Time of Flight (TOF) detector, Forward Calorimeter (FCal), or the Start Counter (SC).</p>
+<section id="id1">
+<h2>Parameters<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>particle_df : <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></dt><dd><p>A dataframe containing particles to be identified. The supplied dataframe must have the following columns: “px”,”py”,”pz”, “Hypothesis”, “tShower”, “BCal Calculated Time of Flight”, “TOF Time of Flight”, “TOF Calculated Time of Flight”, “FCal Calculated Time of Flight”, “SC Time of Flight”, and “SC Calculated Time of Flight”.</p>
+</dd>
+</dl>
+</section>
+<section id="id2">
+<h2>Returns<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>predictions : <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.Series</span></code></a></dt><dd><p>The predictions based on best-available TOF cuts.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pidp_tools.pid.TOF_BCal">
+<span class="sig-prename descclassname"><span class="pre">pidp_tools.pid.</span></span><span class="sig-name descname"><span class="pre">TOF_BCal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">particle_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pidp_tools/pid.html#TOF_BCal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pidp_tools.pid.TOF_BCal" title="Link to this definition">¶</a></dt>
+<dd><p>Identifies particles based on their time of flight, as measured by the GlueX Barrel Calorimeter (BCal).</p>
+<section id="id3">
+<h2>Parameters<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>particle_df : <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></dt><dd><p>A dataframe containing particles to be identified. The supplied dataframe must have the following columns: “px”,”py”,”pz”, “Hypothesis”, “tShower”, and “BCal Calculated Time of Flight”.</p>
+</dd>
+</dl>
+</section>
+<section id="id4">
+<h2>Returns<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>predictions : <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.Series</span></code></a></dt><dd><p>The predictions based on BCal TOF cuts.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pidp_tools.pid.TOF_FCal">
+<span class="sig-prename descclassname"><span class="pre">pidp_tools.pid.</span></span><span class="sig-name descname"><span class="pre">TOF_FCal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">particle_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pidp_tools/pid.html#TOF_FCal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pidp_tools.pid.TOF_FCal" title="Link to this definition">¶</a></dt>
+<dd><p>Identifies particles based on their time of flight, as measured by the GlueX Forward Calorimeter (FCal).</p>
+<section id="id5">
+<h2>Parameters<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>particle_df : <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></dt><dd><p>A dataframe containing particles to be identified. The supplied dataframe must have the following columns: “px”,”py”,”pz”, “Hypothesis”, “tShower”, and “FCal Calculated Time of Flight”.</p>
+</dd>
+</dl>
+</section>
+<section id="id6">
+<h2>Returns<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>predictions : <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.Series</span></code></a></dt><dd><p>The predictions based on FCal TOF cuts.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pidp_tools.pid.TOF_SC">
+<span class="sig-prename descclassname"><span class="pre">pidp_tools.pid.</span></span><span class="sig-name descname"><span class="pre">TOF_SC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">particle_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pidp_tools/pid.html#TOF_SC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pidp_tools.pid.TOF_SC" title="Link to this definition">¶</a></dt>
+<dd><p>Identifies particles based on their time of flight, as measured by the GlueX Start Counter (SC).</p>
+<section id="id7">
+<h2>Parameters<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>particle_df : <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></dt><dd><p>A dataframe containing particles to be identified. The supplied dataframe must have the following columns: “px”,”py”,”pz”, “Hypothesis”, “SC Time of Flight”, and “SC Calculated Time of Flight”.</p>
+</dd>
+</dl>
+</section>
+<section id="id8">
+<h2>Returns<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>predictions : <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.Series</span></code></a></dt><dd><p>The predictions based on SC TOF cuts.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pidp_tools.pid.TOF_TOF">
+<span class="sig-prename descclassname"><span class="pre">pidp_tools.pid.</span></span><span class="sig-name descname"><span class="pre">TOF_TOF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">particle_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pidp_tools/pid.html#TOF_TOF"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pidp_tools.pid.TOF_TOF" title="Link to this definition">¶</a></dt>
+<dd><p>Identifies particles based on their time of flight, as measured by the GlueX Time of Flight (TOF) detector.</p>
+<section id="id9">
+<h2>Parameters<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>particle_df : <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></dt><dd><p>A dataframe containing particles to be identified. The supplied dataframe must have the following columns: “px”,”py”,”pz”, “Hypothesis”, “TOF Time of Flight”, and “TOF Calculated Time of Flight”.</p>
+</dd>
+</dl>
+</section>
+<section id="id10">
+<h2>Returns<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>predictions : <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.Series</span></code></a></dt><dd><p>The predictions based on TOF TOF cuts.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pidp_tools.pid.dEdx_CDC">
+<span class="sig-prename descclassname"><span class="pre">pidp_tools.pid.</span></span><span class="sig-name descname"><span class="pre">dEdx_CDC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">particle_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pidp_tools/pid.html#dEdx_CDC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pidp_tools.pid.dEdx_CDC" title="Link to this definition">¶</a></dt>
+<dd><p>Identifies particles based on their ionization energy loss in the GlueX Central Drift Chamber (CDC).</p>
+<section id="id11">
+<h2>Parameters<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>particle_df : <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></dt><dd><p>A dataframe containing particles to be identified. The supplied dataframe must have the following columns: “px”,”py”,”pz”, “Hypothesis”, and “CDC dEdx”.</p>
+</dd>
+</dl>
+</section>
+<section id="id12">
+<h2>Returns<a class="headerlink" href="#id12" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>predictions : <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.Series</span></code></a></dt><dd><p>The predictions based on CDC ionization energy loss cuts.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pidp_tools.pid.dEdx_FDC">
+<span class="sig-prename descclassname"><span class="pre">pidp_tools.pid.</span></span><span class="sig-name descname"><span class="pre">dEdx_FDC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">particle_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pidp_tools/pid.html#dEdx_FDC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pidp_tools.pid.dEdx_FDC" title="Link to this definition">¶</a></dt>
+<dd><p>Identifies particles based on their ionization energy loss in the GlueX Forward Drift Chambers (FDC).</p>
+<section id="id13">
+<h2>Parameters<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>particle_df : <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></dt><dd><p>A dataframe containing particles to be identified. The supplied dataframe must have the following columns: “px”,”py”,”pz”, “Hypothesis”, and “FDC dEdx”.</p>
+</dd>
+</dl>
+</section>
+<section id="id14">
+<h2>Returns<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>predictions : <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.Series</span></code></a></dt><dd><p>The predictions based on FDC ionization energy loss cuts.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pidp_tools.pid.dEdx_SC">
+<span class="sig-prename descclassname"><span class="pre">pidp_tools.pid.</span></span><span class="sig-name descname"><span class="pre">dEdx_SC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">particle_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pidp_tools/pid.html#dEdx_SC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pidp_tools.pid.dEdx_SC" title="Link to this definition">¶</a></dt>
+<dd><p>Identifies particles based on their ionization energy loss in the GlueX Start Counter (SC).</p>
+<section id="id15">
+<h2>Parameters<a class="headerlink" href="#id15" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>particle_df : <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></dt><dd><p>A dataframe containing particles to be identified. The supplied dataframe must have the following columns: “px”,”py”,”pz”, “Hypothesis”, and “SC dEdx”.</p>
+</dd>
+</dl>
+</section>
+<section id="id16">
+<h2>Returns<a class="headerlink" href="#id16" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>predictions : <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.Series</span></code></a></dt><dd><p>The predictions based on SC ionization energy loss cuts.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pidp_tools.pid.dEdx_TOF">
+<span class="sig-prename descclassname"><span class="pre">pidp_tools.pid.</span></span><span class="sig-name descname"><span class="pre">dEdx_TOF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">particle_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pidp_tools/pid.html#dEdx_TOF"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pidp_tools.pid.dEdx_TOF" title="Link to this definition">¶</a></dt>
+<dd><p>Identifies particles based on their ionization energy loss in the GlueX Time of Flight (TOF) detector.</p>
+<section id="id17">
+<h2>Parameters<a class="headerlink" href="#id17" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>particle_df : <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></dt><dd><p>A dataframe containing particles to be identified. The supplied dataframe must have the following columns: “px”,”py”,”pz”, “Hypothesis”, and “TOF dEdx”.</p>
+</dd>
+</dl>
+</section>
+<section id="id18">
+<h2>Returns<a class="headerlink" href="#id18" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>predictions : <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.Series</span></code></a></dt><dd><p>The predictions based on TOF ionization energy loss cuts.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="formatting.html" class="btn btn-neutral float-left" title="pidp_tools.formatting module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="visualization.html" class="btn btn-neutral float-right" title="pidp_tools.visualization module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Richard Dube.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

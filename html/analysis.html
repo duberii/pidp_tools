@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pidp_tools.analysis module &mdash; pidp_tools 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/documentation_options.js?v=8d563738"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pidp_tools.formatting module" href="formatting.html" />
+    <link rel="prev" title="Introduction" href="intro.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pidp_tools
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#installation">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">pidp_tools.analysis module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pidp_tools.analysis.ConfusionMatrix"><code class="docutils literal notranslate"><span class="pre">ConfusionMatrix</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pidp_tools.analysis.ConfusionMatrix.calculate_matrix"><code class="docutils literal notranslate"><span class="pre">ConfusionMatrix.calculate_matrix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pidp_tools.analysis.ConfusionMatrix.display_matrix"><code class="docutils literal notranslate"><span class="pre">ConfusionMatrix.display_matrix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pidp_tools.analysis.ConfusionMatrix.from_estimator"><code class="docutils literal notranslate"><span class="pre">ConfusionMatrix.from_estimator()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pidp_tools.analysis.ConfusionMatrix.from_model"><code class="docutils literal notranslate"><span class="pre">ConfusionMatrix.from_model()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pidp_tools.analysis.feature_importance"><code class="docutils literal notranslate"><span class="pre">feature_importance()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pidp_tools.analysis.get_charge"><code class="docutils literal notranslate"><span class="pre">get_charge()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pidp_tools.analysis.grab_events"><code class="docutils literal notranslate"><span class="pre">grab_events()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pidp_tools.analysis.install_ROOT"><code class="docutils literal notranslate"><span class="pre">install_ROOT()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pidp_tools.analysis.load_model"><code class="docutils literal notranslate"><span class="pre">load_model()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pidp_tools.analysis.round_accuracies"><code class="docutils literal notranslate"><span class="pre">round_accuracies()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pidp_tools.analysis.save_model"><code class="docutils literal notranslate"><span class="pre">save_model()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pidp_tools.analysis.split_df"><code class="docutils literal notranslate"><span class="pre">split_df()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="formatting.html">pidp_tools.formatting module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pid.html">pidp_tools.pid module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">pidp_tools.visualization module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pidp_tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">pidp_tools.analysis module</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/duberii/pidp_tools/blob/master/source/analysis.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pidp-tools-analysis-module">
+<h1>pidp_tools.analysis module<a class="headerlink" href="#pidp-tools-analysis-module" title="Link to this heading">¶</a></h1>
+<p>This module contains all of the tools that are most likely to be useful for analysis.</p>
+<dl class="py class" id="module-pidp_tools.analysis">
+<dt class="sig sig-object py" id="pidp_tools.analysis.ConfusionMatrix">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pidp_tools.analysis.</span></span><span class="sig-name descname"><span class="pre">ConfusionMatrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">purity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_selection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'necessary'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pidp_tools/analysis.html#ConfusionMatrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pidp_tools.analysis.ConfusionMatrix" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Creates a confusion matrix based on a collection of labels and predictions.</p>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>labels : list</dt><dd><p>A list of strings or integers that represent the true particle type for a series of events.</p>
+</dd>
+<dt>predictions : list</dt><dd><p>A list of strings or integers that represent the predicted particle type for a series of events.</p>
+</dd>
+<dt>title : str, default “”</dt><dd><p>The title of the confusion matrix.</p>
+</dd>
+<dt>purity : bool, default False</dt><dd><p>Normalize confusion matrix by columns instead of rows. If True, the sum of column values will be normalized to 1.</p>
+</dd>
+<dt>label_selection : {“all”, “charge”, “necessary”}, default “necessary”</dt><dd><p>The way to determine which columns and rows to include in the confusion matrix:</p>
+<ul class="simple">
+<li><p>“all” : Includes all particle rows and columns, even if they are entirely empty.</p></li>
+<li><p>“charge” : Includes all of the particle types included in the labels and predictions, plus all particles of the same charge category (charged, neutral) as those included in the labels and predictions.</p></li>
+<li><p>“necessary” : Includes only those particles that are included in the labels or predictions.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pidp_tools.analysis.ConfusionMatrix.calculate_matrix">
+<span class="sig-name descname"><span class="pre">calculate_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pidp_tools/analysis.html#ConfusionMatrix.calculate_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pidp_tools.analysis.ConfusionMatrix.calculate_matrix" title="Link to this definition">¶</a></dt>
+<dd><p>Calculates the confusion matrix based on a collection of labels and predictions.</p>
+<section id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>labels : list</dt><dd><p>A list of integers that represent the true particle type for a series of events.</p>
+</dd>
+<dt>predictions : list</dt><dd><p>A list of integers that represent the predicted particle type for a series of events.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pidp_tools.analysis.ConfusionMatrix.display_matrix">
+<span class="sig-name descname"><span class="pre">display_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pidp_tools/analysis.html#ConfusionMatrix.display_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pidp_tools.analysis.ConfusionMatrix.display_matrix" title="Link to this definition">¶</a></dt>
+<dd><p>Displays the confusion matrix.</p>
+<section id="id2">
+<h3>Parameters<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>title : str, default “”</dt><dd><p>The title of the confusion matrix.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pidp_tools.analysis.ConfusionMatrix.from_estimator">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_estimator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">estimator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Generated</span> <span class="pre">As'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">purity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_selection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'necessary'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pidp_tools/analysis.html#ConfusionMatrix.from_estimator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pidp_tools.analysis.ConfusionMatrix.from_estimator" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a confusion matrix based on the predictions made by the provided estimator.</p>
+<section id="id3">
+<h3>Parameters<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>estimator : function or method</dt><dd><p>The estimator to be used to identify particles. Estimators can take either rows of a dataframe and return a string (to be compatible with the .apply method of the dataframe object), or can take in an entire dataframe and return a series of strings.</p>
+</dd>
+<dt>df : <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></dt><dd><p>The dataframe whose rows represent particles that can be identified by the estimator. Supplied dataframes should have a “Hypothesis” column, which contains either a str or int, and a “Number of Hypotheses” column, which contains an int.</p>
+</dd>
+<dt>target : str, default “Generated As”</dt><dd><p>The target of the estimator. The supplied dataframe must have a column with this label.</p>
+</dd>
+<dt>title : str, default “”</dt><dd><p>The title of the confusion matrix.</p>
+</dd>
+<dt>purity : bool, default False</dt><dd><p>Normalize confusion matrix by columns instead of rows. If True, the sum of column values will be normalized to 1.</p>
+</dd>
+<dt>label_selection : {“all”, “charge”, “necessary”}, default “necessary”</dt><dd><p>The way to determine which columns and rows to include in the confusion matrix:</p>
+<ul class="simple">
+<li><p>“all” : Includes all particle rows and columns, even if they are entirely empty.</p></li>
+<li><p>“charge” : Includes all of the particle types included in the labels and predictions, plus all particles of the same charge category (charged, neutral) as those included in the labels and predictions.</p></li>
+<li><p>“necessary” : Includes only those particles that are included in the labels or predictions.</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading">¶</a></h3>
+<p><a class="reference internal" href="#pidp_tools.analysis.ConfusionMatrix" title="pidp_tools.analysis.ConfusionMatrix"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfusionMatrix</span></code></a></p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pidp_tools.analysis.ConfusionMatrix.from_model">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Generated</span> <span class="pre">As'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">purity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_hypothesis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_selection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'charge'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pidp_tools/analysis.html#ConfusionMatrix.from_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pidp_tools.analysis.ConfusionMatrix.from_model" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a confusion matrix based on the predictions made by the provided model.</p>
+<section id="id4">
+<h3>Parameters<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>model : Any scikit-learn trained model with “predict” and “predict_proba” methods.</dt><dd><p>The model to be used to predict the particle type of the particles supplied in the dataframe.</p>
+</dd>
+<dt>df : <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></dt><dd><p>The dataframe whose rows represent particles that can be identified by the model. Supplied dataframes should have a “Hypothesis” column, which contains either a str or int, and a “Number of Hypotheses” column, which contains an int.</p>
+</dd>
+<dt>target : str, default “Generated As”</dt><dd><p>The target of the model. The supplied dataframe must have a column with this label.</p>
+</dd>
+<dt>title : str, default “”</dt><dd><p>The title of the confusion matrix.</p>
+</dd>
+<dt>purity : bool, default False</dt><dd><p>Normalize confusion matrix by columns instead of rows. If True, the sum of column values will be normalized to 1.</p>
+</dd>
+<dt>match_hypothesis : bool, default False:</dt><dd><p>Require predictions to match the supplied hypothesis. If True, only considers predictions that match the hypothesis. Neutral particles, which have no hypothesis, are still considered in the typical sense. If False, the prediction of the model is the most frequent prediction among all hypotheses.</p>
+</dd>
+<dt>label_selection : {“all”, “charge”, “necessary”}, default “necessary”</dt><dd><p>The way to determine which columns and rows to include in the confusion matrix:</p>
+<ul class="simple">
+<li><p>“all”: Includes all particle rows and columns, even if they are entirely empty.</p></li>
+<li><p>“charge”: Includes all of the particle types included in the labels and predictions, plus all particles of the same charge category (charged, neutral) as those included in the labels and predictions.</p></li>
+<li><p>“necessary”: Includes only those particles that are included in the labels or predictions.</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="id5">
+<h3>Returns<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<p><a class="reference internal" href="#pidp_tools.analysis.ConfusionMatrix" title="pidp_tools.analysis.ConfusionMatrix"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfusionMatrix</span></code></a></p>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pidp_tools.analysis.feature_importance">
+<span class="sig-prename descclassname"><span class="pre">pidp_tools.analysis.</span></span><span class="sig-name descname"><span class="pre">feature_importance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Generated</span> <span class="pre">As'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_hypothesis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_repetitions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_each</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pidp_tools/analysis.html#feature_importance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pidp_tools.analysis.feature_importance" title="Link to this definition">¶</a></dt>
+<dd><p>Calculates and plots the permutation feature importances of the features supplied to the provided model.</p>
+<section id="id6">
+<h2>Parameters<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>model : Any scikit-learn trained model with “predict” and “predict_proba” methods.</dt><dd><p>The model to be used to predict the particle type of the particles supplied in the dataframe.</p>
+</dd>
+<dt>df : <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></dt><dd><p>The dataframe whose rows represent particles that can be identified by the model. Supplied dataframes should have a “Hypothesis” column, which contains either a str or int, and a “Number of Hypotheses” column, which contains an int.</p>
+</dd>
+<dt>target : str, default “Generated As”</dt><dd><p>The target of the model. The supplied dataframe must have a column with this label.</p>
+</dd>
+<dt>match_hypothesis : bool, default False:</dt><dd><p>Require predictions to match the supplied hypothesis. If True, only considers predictions that match the hypothesis. Neutral particles, which have no hypothesis, are still considered in the typical sense. If False, the prediction of the model is the most frequent prediction among all hypotheses.</p>
+</dd>
+<dt>n_repetitions : int, default 3</dt><dd><p>The number of times to permute each feature. The feature importance is the average accuracy over all of the repetitions.</p>
+</dd>
+<dt>n_each : int, default 100</dt><dd><p>The number of events of each particle type to include in each permutation test.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pidp_tools.analysis.get_charge">
+<span class="sig-prename descclassname"><span class="pre">pidp_tools.analysis.</span></span><span class="sig-name descname"><span class="pre">get_charge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ptype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pidp_tools/analysis.html#get_charge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pidp_tools.analysis.get_charge" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the charge of the provided particle</p>
+<section id="id7">
+<h2>Parameters<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>ptype : str or int</dt><dd><p>The particle to find the charge of. If int, the particle is assumed to be the element of the following list with the corresponding index: [“Photon”, “KLong”, “Neutron”, “Proton”, “K+”, “Pi+”, “AntiMuon”, “Positron”, “AntiProton”, “K-”, “Pi-”, “Muon”, “Electron”, “No ID”].</p>
+</dd>
+</dl>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_charge</span><span class="p">(</span><span class="s2">&quot;AntiProton&quot;</span><span class="p">)</span>
+<span class="go">-1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_charge</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pidp_tools.analysis.grab_events">
+<span class="sig-prename descclassname"><span class="pre">pidp_tools.analysis.</span></span><span class="sig-name descname"><span class="pre">grab_events</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_each</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_strings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_less</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pidp_tools/analysis.html#grab_events"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pidp_tools.analysis.grab_events" title="Link to this definition">¶</a></dt>
+<dd><p>Grabs the selected number of events for each particle type, preserving hypothesis groups.</p>
+<section id="id8">
+<h2>Parameters<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>input_df : <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></dt><dd><p>The dataframe to grab events from. The supplied dataframe should have a “Number of Hypotheses” column.</p>
+</dd>
+<dt>n_each : int, default 5000</dt><dd><p>The number of events of each particle type to include in the resulting dataset. The number of events for each particle type may be smaller if “allow_less” is True.</p>
+</dd>
+<dt>reverse : bool, default False</dt><dd><p>Grab events from the end of the dataframe first. If True, events are grabbed from the end of the file first.</p>
+</dd>
+<dt>return_strings : bool, default False</dt><dd><p>Return a dataframe in which the “Hypothesis” and “Generated As” columns contain strings instead of integers. If True, the returned dataframe will have strings in the “Hypothesis” and “Generated As” columns.</p>
+</dd>
+<dt>allow_less : bool, default False</dt><dd><p>Allow the final dataframe to have fewer than the requested number of events if not enough data is available. If True, the resulting dataframe may not have the requested number of events for each particle, and the number of events may be different for each particle type.</p>
+</dd>
+</dl>
+</section>
+<section id="id9">
+<h2>Returns<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>smaller_dataset : <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></dt><dd><p>A dataframe containing the events grabbed from the input dataframe.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pidp_tools.analysis.install_ROOT">
+<span class="sig-prename descclassname"><span class="pre">pidp_tools.analysis.</span></span><span class="sig-name descname"><span class="pre">install_ROOT</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pidp_tools/analysis.html#install_ROOT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pidp_tools.analysis.install_ROOT" title="Link to this definition">¶</a></dt>
+<dd><p>Installs ROOT.</p>
+<section id="id10">
+<h2>Examples<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h2>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pidp_tools</span> <span class="kn">import</span> \<span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">install_ROOT</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ROOT</span> <span class="kn">import</span> \<span class="o">*</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pidp_tools.analysis.load_model">
+<span class="sig-prename descclassname"><span class="pre">pidp_tools.analysis.</span></span><span class="sig-name descname"><span class="pre">load_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'my_model.joblib'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pidp_tools/analysis.html#load_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pidp_tools.analysis.load_model" title="Link to this definition">¶</a></dt>
+<dd><p>Loads a model from a joblib dump at the specified path.</p>
+<section id="id11">
+<h2>Parameters<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>path : str, default “my_model.joblib”</dt><dd><p>The path to the model save location.</p>
+</dd>
+</dl>
+</section>
+<section id="id12">
+<h2>Returns<a class="headerlink" href="#id12" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>model : Scikit-learn trained model.</dt><dd><p>The loaded scikit-learn model.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pidp_tools.analysis.round_accuracies">
+<span class="sig-prename descclassname"><span class="pre">pidp_tools.analysis.</span></span><span class="sig-name descname"><span class="pre">round_accuracies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pidp_tools/analysis.html#round_accuracies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pidp_tools.analysis.round_accuracies" title="Link to this definition">¶</a></dt>
+<dd><p>Rounds a number to 2 decimal places. If the rounded number is 0.00 or 1.00, an int is returned.</p>
+<section id="id13">
+<h2>Parameters<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>num : float or int</dt><dd><p>The number to round.</p>
+</dd>
+</dl>
+</section>
+<section id="id14">
+<h2>Examples<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h2>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">round_accuracies</span><span class="p">(</span><span class="mf">0.3333333</span><span class="p">)</span>
+<span class="go">0.33</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">round_accuracies</span><span class="p">(</span><span class="mf">0.001</span><span class="p">)</span>
+<span class="go">0</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pidp_tools.analysis.save_model">
+<span class="sig-prename descclassname"><span class="pre">pidp_tools.analysis.</span></span><span class="sig-name descname"><span class="pre">save_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'my_model.joblib'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pidp_tools/analysis.html#save_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pidp_tools.analysis.save_model" title="Link to this definition">¶</a></dt>
+<dd><p>Saves a model as a joblib dump at the specified path.</p>
+<section id="id15">
+<h2>Parameters<a class="headerlink" href="#id15" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>model : Any scikit-learn trained model.</dt><dd><p>The model to be saved.</p>
+</dd>
+<dt>path : str, default “my_model.joblib”</dt><dd><p>The path to the model save location.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pidp_tools.analysis.split_df">
+<span class="sig-prename descclassname"><span class="pre">pidp_tools.analysis.</span></span><span class="sig-name descname"><span class="pre">split_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">training_fraction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pidp_tools/analysis.html#split_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pidp_tools.analysis.split_df" title="Link to this definition">¶</a></dt>
+<dd><p>Splits the supplied dataframe into training data and test data, preserving hypothesis groups.</p>
+<section id="id16">
+<h2>Parameters<a class="headerlink" href="#id16" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>input_df : <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></dt><dd><p>The dataframe to split. The supplied dataframe should have a “Number of Hypotheses” column.</p>
+</dd>
+<dt>training_fraction : float, default 0.9</dt><dd><p>The fraction of events to be included in the training dataset. All remaining events will be included in the test dataset.</p>
+</dd>
+</dl>
+</section>
+<section id="id17">
+<h2>Returns<a class="headerlink" href="#id17" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>training : <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></dt><dd><p>A dataframe containing the requested fraction of the input data.</p>
+</dd>
+<dt>test : <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></dt><dd><p>A dataframe containing the rows of the input data not included in the training dataset.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="intro.html" class="btn btn-neutral float-left" title="Introduction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="formatting.html" class="btn btn-neutral float-right" title="pidp_tools.formatting module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Richard Dube.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pidp_tools.formatting &mdash; pidp_tools 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/documentation_options.js?v=8d563738"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pidp_tools
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pidp_tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pidp_tools.formatting</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pidp_tools.formatting</h1><div class="highlight"><pre>
+<div class="viewcode-block" id="format_labels">
+<a class="viewcode-back" href="../../index.html#pidp_tools.formatting.format_labels">[docs]</a>
+<span></span><span class="k">def</span> <span class="nf">format_labels</span><span class="p">(</span><span class="n">particle</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Formats a particle label from a plain string to a LaTeX string.</span>
+
+<span class="sd">  Parameters</span>
+<span class="sd">  ----------</span>
+<span class="sd">  particle \: str</span>
+<span class="sd">      The particle label to be converted into a LaTeX string.</span>
+
+<span class="sd">  Returns</span>
+<span class="sd">  -------</span>
+<span class="sd">  str</span>
+<span class="sd">      The LaTeX formatted label, or the original label if not a valid particle type.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">if</span> <span class="n">particle</span> <span class="o">==</span> <span class="s2">&quot;Photon&quot;</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">r</span><span class="s2">&quot;$\gamma$&quot;</span>
+  <span class="k">elif</span> <span class="n">particle</span> <span class="o">==</span> <span class="s2">&quot;KLong&quot;</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">r</span><span class="s2">&quot;$K_L$&quot;</span>
+  <span class="k">elif</span> <span class="n">particle</span> <span class="o">==</span> <span class="s2">&quot;Neutron&quot;</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">r</span><span class="s2">&quot;$n$&quot;</span>
+  <span class="k">elif</span> <span class="n">particle</span> <span class="o">==</span> <span class="s2">&quot;Proton&quot;</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">r</span><span class="s2">&quot;$p$&quot;</span>
+  <span class="k">elif</span> <span class="n">particle</span> <span class="o">==</span> <span class="s2">&quot;K+&quot;</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">r</span><span class="s2">&quot;$K+$&quot;</span>
+  <span class="k">elif</span> <span class="n">particle</span> <span class="o">==</span> <span class="s2">&quot;Pi+&quot;</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">r</span><span class="s2">&quot;$\pi+$&quot;</span>
+  <span class="k">elif</span> <span class="n">particle</span> <span class="o">==</span> <span class="s2">&quot;AntiMuon&quot;</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">r</span><span class="s2">&quot;$\overline{\mu}$&quot;</span>
+  <span class="k">elif</span> <span class="n">particle</span> <span class="o">==</span> <span class="s2">&quot;Positron&quot;</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">r</span><span class="s2">&quot;$\overline</span><span class="si">{e}</span><span class="s2">$&quot;</span>
+  <span class="k">elif</span> <span class="n">particle</span> <span class="o">==</span> <span class="s2">&quot;AntiProton&quot;</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">r</span><span class="s2">&quot;$\overline</span><span class="si">{p}</span><span class="s2">$&quot;</span>
+  <span class="k">elif</span> <span class="n">particle</span> <span class="o">==</span> <span class="s2">&quot;K-&quot;</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">r</span><span class="s2">&quot;$K-$&quot;</span>
+  <span class="k">elif</span> <span class="n">particle</span> <span class="o">==</span> <span class="s2">&quot;Pi-&quot;</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">r</span><span class="s2">&quot;$\pi-$&quot;</span>
+  <span class="k">elif</span> <span class="n">particle</span> <span class="o">==</span> <span class="s2">&quot;Muon&quot;</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">r</span><span class="s2">&quot;$\mu$&quot;</span>
+  <span class="k">elif</span> <span class="n">particle</span> <span class="o">==</span> <span class="s2">&quot;Electron&quot;</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">r</span><span class="s2">&quot;$e$&quot;</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">particle</span></div>
+
+  
+<div class="viewcode-block" id="from_pdg">
+<a class="viewcode-back" href="../../index.html#pidp_tools.formatting.from_pdg">[docs]</a>
+<span class="k">def</span> <span class="nf">from_pdg</span><span class="p">(</span><span class="n">ptype</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Finds the string label of the particle based on a Particle Data Group (PDG) number.</span>
+
+<span class="sd">  Parameters</span>
+<span class="sd">  ----------</span>
+<span class="sd">  ptype \: int</span>
+<span class="sd">      A PDG number corresponding to a particle in the following list\: [&quot;Photon&quot;,&quot;KLong&quot;,&quot;Neutron&quot;,&quot;Proton&quot;,&quot;K+&quot;,&quot;Pi+&quot;,&quot;AntiMuon&quot;,&quot;Positron&quot;,&quot;AntiProton&quot;,&quot;K-&quot;,&quot;Pi-&quot;,&quot;Muon&quot;,&quot;Electron&quot;,&quot;No ID&quot;]</span>
+
+<span class="sd">  Returns</span>
+<span class="sd">  -------</span>
+<span class="sd">  str</span>
+<span class="sd">      A string of the name of the particle that corresponds to the provided pdg number.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">ptype</span><span class="p">)</span> <span class="o">==</span> <span class="mi">11</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">&quot;Electron&quot;</span>
+  <span class="k">elif</span> <span class="nb">int</span><span class="p">(</span><span class="n">ptype</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">11</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">&quot;Positron&quot;</span>
+  <span class="k">elif</span> <span class="nb">int</span><span class="p">(</span><span class="n">ptype</span><span class="p">)</span> <span class="o">==</span> <span class="mi">13</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">&quot;Muon&quot;</span>
+  <span class="k">elif</span> <span class="nb">int</span><span class="p">(</span><span class="n">ptype</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">13</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">&quot;AntiMuon&quot;</span>
+  <span class="k">elif</span> <span class="nb">int</span><span class="p">(</span><span class="n">ptype</span><span class="p">)</span> <span class="o">==</span> <span class="mi">211</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">&quot;Pi+&quot;</span>
+  <span class="k">elif</span> <span class="nb">int</span><span class="p">(</span><span class="n">ptype</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">211</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">&quot;Pi-&quot;</span>
+  <span class="k">elif</span> <span class="nb">int</span><span class="p">(</span><span class="n">ptype</span><span class="p">)</span> <span class="o">==</span> <span class="mi">321</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">&quot;K+&quot;</span>
+  <span class="k">elif</span> <span class="nb">int</span><span class="p">(</span><span class="n">ptype</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">321</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">&quot;K-&quot;</span>
+  <span class="k">elif</span> <span class="nb">int</span><span class="p">(</span><span class="n">ptype</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2212</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">&quot;Proton&quot;</span>
+  <span class="k">elif</span> <span class="nb">int</span><span class="p">(</span><span class="n">ptype</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">2212</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">&quot;AntiProton&quot;</span>
+  <span class="k">elif</span> <span class="nb">int</span><span class="p">(</span><span class="n">ptype</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2112</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">&quot;Neutron&quot;</span>
+  <span class="k">elif</span> <span class="nb">int</span><span class="p">(</span><span class="n">ptype</span><span class="p">)</span> <span class="o">==</span> <span class="mi">22</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">&quot;Photon&quot;</span>
+  <span class="k">elif</span> <span class="nb">int</span><span class="p">(</span><span class="n">ptype</span><span class="p">)</span> <span class="o">==</span> <span class="mi">130</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">&quot;KLong&quot;</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Richard Dube.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

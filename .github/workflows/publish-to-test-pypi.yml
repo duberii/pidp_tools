@@ -1,6 +1,9 @@
 name: Publish to test PyPI
 
-on: push
+on: 
+  push:
+    paths:
+      - pyproject.toml
 
 jobs:
   build:

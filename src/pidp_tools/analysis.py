@@ -128,7 +128,7 @@ class ConfusionMatrix():
     self.display_matrix(title)
   
   @classmethod
-  def from_estimator(cls, estimator, df, target='Generated As', title="", purity=False, label_selection="necessary"):
+  def from_estimator(cls, estimator, df, title="", purity=False, label_selection="necessary"):
     """
     Creates a confusion matrix based on the predictions made by the provided estimator.
 
@@ -138,8 +138,6 @@ class ConfusionMatrix():
         The estimator to be used to identify particles. Estimators can take either rows of a dataframe and return a string (to be compatible with the .apply method of the dataframe object), or can take in an entire dataframe and return a series of strings.
     df \: :external:class:`pandas.DataFrame`
         The dataframe whose rows represent particles that can be identified by the estimator. Supplied dataframes should have a "Hypothesis" column, which contains either a str or int, and a "Number of Hypotheses" column, which contains an int.
-    target \: str, default "Generated As"
-        The target of the estimator. The supplied dataframe must have a column with this label.
     title \: str, default ""
         The title of the confusion matrix.
     purity \: bool, default False
@@ -199,13 +197,13 @@ class ConfusionMatrix():
     reduced_dataset = dataset.loc[dataset['is matched']]
     grouped = reduced_dataset.sample(frac=1)[['Prediction','eventno']].groupby('eventno')
     predictions = grouped.head(1).set_index('eventno').sort_index().reindex(list(range(number_of_events)),fill_value=13)['Prediction'].to_list()
-    identities = [int(dataset[target][starting_index]) for starting_index, ending_index in index_list]
+    identities = [int(dataset["Generated As"][starting_index]) for starting_index, ending_index in index_list]
 
-    confusion_matrix = cls(identities, predictions, target=target,title=title, purity=purity, label_selection=label_selection)
+    confusion_matrix = cls(identities, predictions,title=title, purity=purity, label_selection=label_selection)
     return confusion_matrix
   
   @classmethod
-  def from_model(cls, model, df, target="Generated As", title="", purity=False, match_hypothesis=False, label_selection="charge"):
+  def from_model(cls, model, df, title="", purity=False, match_hypothesis=False, label_selection="charge"):
     """
     Creates a confusion matrix based on the predictions made by the provided model.
 
@@ -215,8 +213,6 @@ class ConfusionMatrix():
         The model to be used to predict the particle type of the particles supplied in the dataframe.
     df \: :external:class:`pandas.DataFrame`
         The dataframe whose rows represent particles that can be identified by the model. Supplied dataframes should have a "Hypothesis" column, which contains either a str or int, and a "Number of Hypotheses" column, which contains an int.
-    target \: str, default "Generated As"
-        The target of the model. The supplied dataframe must have a column with this label.
     title \: str, default ""
         The title of the confusion matrix.
     purity \: bool, default False
@@ -281,7 +277,7 @@ class ConfusionMatrix():
       identities = grouped_df['Generated As'].head(1).to_list()
       predictions = grouped_df['Prediction'].agg(lambda x: x.value_counts().index[0]).to_list()
 
-    confusion_matrix = cls(identities, predictions, target=target,title=title, purity=purity, label_selection=label_selection)
+    confusion_matrix = cls(identities, predictions,title=title, purity=purity, label_selection=label_selection)
     return confusion_matrix
 
   def calculate_matrix(self, labels, predictions):

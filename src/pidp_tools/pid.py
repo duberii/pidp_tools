@@ -297,7 +297,7 @@ def TOF_Combined(particle_df):
   predictions = particle.apply(temp_match, axis=1)
   return predictions
   
-def DIRC(particle_df):
+def DIRC_DIRC(particle_df):
   """
   Identifies particles based on their likelihood values produced by the GlueX Detection of Internally Reflected Cherenkov Radiation (DIRC) detector.
 

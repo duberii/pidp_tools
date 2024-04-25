@@ -257,7 +257,7 @@ def TOF_FCal(particle_df):
   predictions = particle.apply(temp_match, axis=1)
   return predictions
 
-def TOF(particle_df):
+def TOF_Combined(particle_df):
   """
   Identifies particles based on their best-available time of flight, as measured by the GlueX Barrel Calorimeter (BCal), Time of Flight (TOF) detector, Forward Calorimeter (FCal), or the Start Counter (SC).
 

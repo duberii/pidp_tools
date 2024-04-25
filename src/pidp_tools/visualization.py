@@ -328,7 +328,7 @@ class track_fitting():
     The result of this code is a track fitting applet with 4 sliders\: px, py, t_max, and charge. The remaining arguments are fixed, and will not correspond to a displayed widget.
     
     """
-    widget=interactive(self.fig.update_figure, **kwargs)
+    widget=interactive(self.figure.update_figure, **kwargs)
     controls = HBox(widget.children[:-1], layout = Layout(flex_flow='row wrap'))
     output = widget.children[-1]
     display(VBox([controls, output]))

@@ -476,7 +476,7 @@ def grab_events(input_df, n_each = 5000,reverse = False, return_strings = False,
     current_particle = 0
   while starting_index <= nRows - 1 :
     if df['Generated As'][starting_index] != current_particle:
-      if counter <= n_each and not allow_less:
+      if counter < n_each and not allow_less:
         raise ValueError("Not enough rows in dataframe to grab " + str(n_each) + " events of " + particle_list[current_particle] + " events.")
       if reverse:
         current_particle -= 1

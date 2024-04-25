@@ -316,7 +316,7 @@ def DIRC_DIRC(particle_df):
   if not isinstance(particle['Hypothesis'][0], str):
     particle['Hypothesis'].apply(lambda x: particle_list[int(x)])
   hasDIRC = particle['lp'].notna()
-  maxLik = particle[['lp','lk','lpi','lele']].max()
+  maxLik = particle[['lp','lk','lpi','lele']].max(axis=1)
   isProton = ((particle['Hypothesis'] == "Proton") | (particle['Hypothesis'] == "AntiProton")) & (maxLik == particle['lp']) & hasDIRC
   isK = ((particle['Hypothesis'] == "K+") | (particle['Hypothesis'] == "K-")) & (maxLik == particle['lk']) & hasDIRC
   isPi = ((particle['Hypothesis'] == "Pi+") | (particle['Hypothesis'] == "Pi-")) & (maxLik == particle['lpi']) & hasDIRC

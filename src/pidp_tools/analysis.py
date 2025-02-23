@@ -20,10 +20,10 @@ def install_ROOT():
     import ROOT
   except:
     try:
-      subprocess.run(["wget","-q","https://github.com/MohamedElashri/ROOT/releases/download/ubuntu/root_v6.28.04_Ubuntu_20.04.zip"])
-      subprocess.run(["unzip", "-o", "-qq", "/content/root_v6.28.04_Ubuntu_20.04.zip"])
-      subprocess.run(["apt-get", "-qq", "install", "git", "dpkg-dev", "cmake", "g++", "gcc", "binutils", "libx11-dev", "libxpm-dev", "libxft-dev", "libxext-dev", "tar", "gfortran", "subversion", "&>", "/dev/null", "2>&1"])
-      subprocess.run(["rm", "-f", "root_v6.28.04_Ubuntu_20.04.zip"])
+      subprocess.run(["wget","-q","https://github.com/MohamedElashri/ROOT/releases/download/v6.30.04_python11/root_v6.30.04_Ubuntu_Python3.11.zip"])
+      subprocess.run(["unzip", "-q", "-o", "root_v6.30.04_Ubuntu_Python3.11.zip"])
+      subprocess.run(["apt-get", "-qq", "install", "git", "dpkg-dev", "cmake", "g++", "gcc", "binutils", "libx11-dev", "libxpm-dev", "libxft-dev", "libxext-dev", "tar", "gfortran", "subversion", "libpython3.11-dev", "&>", "/dev/null", "2>&1"])
+      subprocess.run(["rm", "-f", "root_v6.30.04_Ubuntu_Python3.11.zip"])
       subprocess.run(["wget", "-q", "http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb"])
       subprocess.run(["sudo", "dpkg", "-i", "libssl1.1_1.1.1f-1ubuntu2_amd64.deb"])
       subprocess.run(["rm", "-f", "libssl1.1_1.1.1f-1ubuntu2_amd64.deb"])
@@ -37,7 +37,7 @@ def install_ROOT():
       ctypes.cdll.LoadLibrary('/content/root_build/lib//libThread.so')
       ctypes.cdll.LoadLibrary('/content/root_build/lib//libTreePlayer.so')
     except:
-      raise OSError("Unable to install ROOT. This install was designed specifically for use in google colab. Installing on personal computers is discouraged due to the file size.")
+      raise OSError("Unable to install ROOT. This install was designed specifically for use in Google Colab. Installing on personal computers is discouraged due to the file size.")
 
 def get_charge(ptype):
   """

@@ -20,7 +20,7 @@ def install_ROOT():
     import ROOT
   except:
     try:
-      subprocess.run(["wget","-q","https://github.com/MohamedElashri/ROOT/releases/download/v6.30.04_python11/root_v6.30.04_Ubuntu_Python3.11.zip"])
+      subprocess.run(["wget","-q","https://github.com/MohamedElashri/ROOT/releases/download/root-v6.30.04-python3.11/root_v6.30.04_Ubuntu_Python3.11.zip"])
       subprocess.run(["unzip", "-q", "-o", "root_v6.30.04_Ubuntu_Python3.11.zip"])
       subprocess.run(["apt-get", "-qq", "install", "git", "dpkg-dev", "cmake", "g++", "gcc", "binutils", "libx11-dev", "libxpm-dev", "libxft-dev", "libxext-dev", "tar", "gfortran", "subversion", "libpython3.11-dev", "&>", "/dev/null", "2>&1"])
       subprocess.run(["rm", "-f", "root_v6.30.04_Ubuntu_Python3.11.zip"])

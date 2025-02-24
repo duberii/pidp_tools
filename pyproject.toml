@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pidp_tools"
-version = "1.1.0b2"
+version = "1.1.0b3"
 authors = [
     { name="Richard Dube", email="richardddube@gmail.com"},
 ]
@@ -24,7 +24,7 @@ dependencies = [
     "plotly ~= 5.15",
     "pandas ~= 2.0",
     "ipywidgets ~= 7.7",
-    "Pillow ~= 9.4",
+    "Pillow ~= 10.2",
     "joblib ~= 1.4",
 ]
 

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pidp_tools"
-version = "1.1.0b4"
+version = "1.1.0b5"
 authors = [
     { name="Richard Dube", email="richardddube@gmail.com"},
 ]
@@ -18,14 +18,14 @@ classifiers = [
     "Framework :: Jupyter",
 ]
 dependencies = [
-    "matplotlib ~= 3.7",
-    "numpy ~= 1.25",
-    "scikit-learn ~= 1.2",
-    "plotly ~= 5.15",
-    "pandas ~= 2.0",
-    "ipywidgets ~= 7.7",
-    "Pillow ~= 11.1",
-    "joblib ~= 1.4",
+    "matplotlib >= 3.7",
+    "numpy >= 1.25",
+    "scikit-learn >= 1.2",
+    "plotly >= 5.15",
+    "pandas >= 2.0",
+    "ipywidgets >= 7.7",
+    "Pillow >= 8",
+    "joblib >= 1.4",
 ]
 
 

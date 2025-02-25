@@ -20,22 +20,26 @@ def install_ROOT():
     import ROOT
   except:
     try:
-      subprocess.run(["wget","-q","https://github.com/MohamedElashri/ROOT/releases/download/ubuntu/root_v6.30.04_Ubuntu_Python3.11.zip"])
-      subprocess.run(["unzip", "-q", "-o", "root_v6.30.04_Ubuntu_Python3.11.zip"])
-      subprocess.run(["sudo", "ldconfig", "&", "apt-get", "install", "-y", "git", "dpkg-dev", "cmake", "g++", "gcc", "binutils", "libx11-dev", "libxpm-dev", "libxft-dev", "libxext-dev", "tar", "gfortran", "subversion", "libpython3.11-dev", "&>", "/dev/null", "2>&1"])
+      subprocess.run(["wget", "-q", "--show-progress", "https://github.com/MohamedElashri/ROOT/releases/download/ubuntu/root_v6.30.04_Ubuntu_Python3.11.zip"])
+      subprocess.run(["unzip", "-q", "root_v6.30.04_Ubuntu_Python3.11.zip"])
+      subprocess.run(["sudo", "ldconfig"])
+
+      subprocess.run(["sudo", "apt-get", "install", "-y", "git", "dpkg-dev", "cmake", "g++", "gcc", "binutils", "libx11-dev", "libxpm-dev", "libxft-dev", "libxext-dev", "tar", "gfortran", "subversion", "libpython3.11-dev"])
       subprocess.run(["rm", "-f", "root_v6.30.04_Ubuntu_Python3.11.zip"])
-      subprocess.run(["wget", "-q", "http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb"])
+      subprocess.run(["wget", "http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb"])
       subprocess.run(["sudo", "dpkg", "-i", "libssl1.1_1.1.1f-1ubuntu2_amd64.deb"])
       subprocess.run(["rm", "-f", "libssl1.1_1.1.1f-1ubuntu2_amd64.deb"])
       import sys
-      sys.path.append("root_build/")
-      sys.path.append("root_build/bin/")
-      sys.path.append("root_build/include/")
-      sys.path.append("root_build/lib/")
+      sys.path.extend([
+        "root_build/",
+        "root_build/bin/",
+        "root_build/include/",
+        "root_build/lib/"
+    ])
       import ctypes
-      ctypes.cdll.LoadLibrary('root_build/lib/libCore.so')
-      ctypes.cdll.LoadLibrary('root_build/lib/libThread.so')
-      ctypes.cdll.LoadLibrary('root_build/lib/libTreePlayer.so')
+      ctypes.cdll.LoadLibrary("root_build/lib/libCore.so")
+      ctypes.cdll.LoadLibrary("root_build/lib/libThread.so")
+      ctypes.cdll.LoadLibrary("root_build/lib/libTreePlayer.so")
     except:
       raise OSError("Unable to install ROOT. This install was designed specifically for use in Google Colab. Installing on personal computers is discouraged due to the file size.")
 

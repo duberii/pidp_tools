@@ -13,7 +13,11 @@ def install_ROOT():
   --------
   >>> from pidp_tools import \*
   >>> install_ROOT()
-  >>> from ROOT import \*
+  >>> from ROOT import gROOT, TCanvas, TH2D
+
+  Known Issues
+  -------------
+  Wildcard imports (such as `from ROOT import *`) are known to crash the kernel.
   """
   import subprocess
   try:
